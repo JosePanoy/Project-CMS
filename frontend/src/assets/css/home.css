@@ -1,0 +1,21 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.home-title {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 2em;
+    cursor: default;
+}
+
+.intro-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.2em;
+    max-width: 800px;
+    cursor: default;
+}

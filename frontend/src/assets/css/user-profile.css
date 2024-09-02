@@ -1,0 +1,95 @@
+.user-profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 0 auto;
+    border: 1px dotted red;
+    width: 700px;
+    margin-top: 50px;
+}
+
+.profile-header {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.profile-pic-container {
+    display: flex;
+    align-items: center;
+}
+
+.profile-pic-user {
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 50px;
+}
+
+.profile-pic-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 2rem;
+    margin-right: 50px;
+}
+
+.profile-info-user {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 100%;
+}
+
+.profile-info-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.profile-username {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-right: 50px;
+}
+
+.profile-edit-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.profile-edit-btn:hover {
+    background-color: #0056b3;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 50px;
+    margin-bottom: 50px;
+}
+
+.profile-posts,
+.profile-followers,
+.profile-following {
+    font-size: 1rem;
+    color: #333;
+}
+
+.profile-quote {
+    font-style: italic;
+    color: #555;
+    max-width: 100%;
+}

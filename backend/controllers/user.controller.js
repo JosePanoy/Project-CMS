@@ -1,73 +1,99 @@
-import User from "../models/user.model.js";
+import User from '../models/user.model.js';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
-// Get all users
-const getUsers = async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.status(200).json(users);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+export const createUser = async (req, res) => {
+    const { name, nickName, addr, email, contact, password } = req.body;
+    const profilePic = req.file ? req.file.filename : null;
 
-// Get user by id
-const getUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (!name || !nickName || !addr || !email || !contact || !password) {
+        return res.status(400).json({ message: 'All fields are required' });
     }
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 
-// Create user
-const createUser = async (req, res) => {
     try {
-      const user = await User.create(req.body);
-      res.status(201).json(user);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({
+            _id: uuidv4(),
+            name,
+            nickName,
+            addr,
+            email,
+            contact,
+            password: hashedPassword,
+            profilePic
+        });
+
+        await newUser.save();
+        res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
-      console.error("Error creating user:", error);
-      res.status(400).json({ message: error.message, details: error.errors });
+        if (error.code === 11000) { // Duplicate key error
+            return res.status(400).json({ message: 'Email already in use' });
+        }
+        console.error('Error creating user:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
-  };
-  
-
-// Update user
-const updateUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findByIdAndUpdate(id, req.body, { new: true });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
 
-// Delete user
-const deleteUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findByIdAndDelete(id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+export const login = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.json({ token });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
     }
-    res.status(200).json({ message: "User deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
 
-export {
-  getUsers,
-  getUser,
-  createUser,
-  updateUser,
-  deleteUser
+export const getUserInfo = async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) return res.status(401).json({ message: 'No token provided' });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        res.json({
+            name: user.name,
+            nickName: user.nickName,
+            email: user.email,
+            addr: user.addr,
+            contact: user.contact,
+            profilePic: user.profilePic
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find({}, 'name');
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+export const getUserById = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id); // Adjust based on your model
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
 };

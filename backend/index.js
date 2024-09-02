@@ -1,51 +1,59 @@
-import express from 'express'
-import mongoose, {Mongoose} from 'mongoose'
-import dotenv from 'dotenv'
-import usersRoute from "./routes/user.routes.js";
-import cors from 'cors'
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import usersRoute from './routes/user.routes.js';
+import contentRoutes from './routes/content.routes.js';
+import userUploadRoutes from './routes/userupload.routes.js'; 
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-
-const app = express();
-app.use(express.json());
 dotenv.config();
 
-//connection
-const PORT = process.env.PORT || 7000;
+const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.json());
+app.use(cors({
+    origin: 'http://localhost:5173',  
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+}));
+
+app.use('/api/users', usersRoute);
+app.use('/api/content', contentRoutes);
+app.use('/api/userupload', userUploadRoutes);
+
+app.use('/profilepic', express.static(path.join(__dirname, 'profilepic')));
+app.use('/usersUpload', express.static(path.join(__dirname, 'usersUpload')));
+
+
+app.get('/debug/usersUpload/:filename', (req, res) => {
+    const filePath = path.join(__dirname, 'usersUpload', req.params.filename);
+    res.sendFile(filePath);
+});
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
+});
+
+const PORT = process.env.PORT || 8000;
 const MONGOURL = process.env.MONGOURL;
 
-//cors config
-const corsOptions = {
-    origin: 'http://localhost:5173', // Your frontend URL
-    methods: 'GET,POST,PUT,DELETE',
-    allowedHeaders: 'Content-Type',
-  };
-
-app.use(cors(corsOptions));
-
-// Testing the connection to env
 if (!MONGOURL) {
-    console.error("MONGOURL is not defined. Please check your .env file.");
+    console.error("MONGOURL is not defined.");
     process.exit(1);
-  }
-  
+}
 
-
-  // Testing connection connected to MongoDB
-  mongoose
-    .connect(MONGOURL)
+mongoose.connect(MONGOURL)
     .then(() => {
-      console.log("Database is connected");
-      app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-      });
+        console.log("Database is connected");
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
     })
     .catch((error) => {
-      console.error("MongoDB connection error:", error);
+        console.error("MongoDB connection error:", error);
     });
-
-  
-  app.get("/", (req, res) => {
-    res.send("Server and DB is working!");
-  });
-
-  app.use("/api/users", usersRoute);
