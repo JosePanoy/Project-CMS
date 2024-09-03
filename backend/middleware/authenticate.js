@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/user.model.js';
 
 export const authenticate = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
@@ -8,7 +7,7 @@ export const authenticate = (req, res, next) => {
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) return res.status(403).json({ message: 'Failed to authenticate token' });
 
-    req.user = decoded; 
+    req.user = decoded;
     next();
   });
 };

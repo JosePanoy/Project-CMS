@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { FaHome, FaSearch, FaEnvelope, FaBell, FaUser, FaSignOutAlt, FaUpload } from 'react-icons/fa';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
 import '../src/assets/css/dashboard-main-sidebar.css';
 import loadingAnimation from '../src/assets/img/loading.gif';
 
 function DashboardSidebar({ user }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [file, setFile] = useState(null);
-  const [caption, setCaption] = useState('');
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -24,11 +21,7 @@ function DashboardSidebar({ user }) {
   };
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setFile(null);
-    setCaption('');
-  };
+  const closeModal = () => setIsModalOpen(false);
 
   const openLogoutConfirmModal = () => setIsLogoutConfirmOpen(true);
   const closeLogoutConfirmModal = () => setIsLogoutConfirmOpen(false);
@@ -40,42 +33,6 @@ function DashboardSidebar({ user }) {
       setLoading(false);
       handleLogout();
     }, 3500); // 3.5 seconds delay
-  };
-
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleCaptionChange = (e) => {
-    setCaption(e.target.value);
-  };
-
-  const handleUpload = async () => {
-    if (!file || !caption) {
-      alert('Please upload a file and add a caption.');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('contentFile', file);
-    formData.append('caption', caption);
-    formData.append('contentType', file.type.startsWith('image/') ? 'image' : 'video');
-    formData.append('userId', user._id);
-
-    try {
-      await axios.post('http://localhost:8000/api/userupload/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-
-      alert('Content uploaded successfully!');
-      closeModal();
-    } catch (error) {
-      alert('Failed to upload content.');
-      console.error('Upload Error:', error.response?.data.message || error.message);
-    }
   };
 
   return (
@@ -127,22 +84,8 @@ function DashboardSidebar({ user }) {
         <div className="modal-overlay-create">
           <div className="modal-content-create">
             <h3>Upload Content</h3>
-            <input
-              type="file"
-              accept="image/*,video/*"
-              onChange={handleFileChange}
-              className="file-input-create"
-            />
-            <textarea
-              placeholder="Enter caption"
-              className="caption-input-create"
-              value={caption}
-              onChange={handleCaptionChange}
-            />
+            <p>The upload functionality has been removed. This modal is now used for other purposes.</p>
             <div className="modal-buttons-create">
-              <button onClick={handleUpload} className="modal-btn-create upload-btn-create">
-                Upload
-              </button>
               <button onClick={closeModal} className="modal-btn-create cancel-btn-create">
                 Close
               </button>

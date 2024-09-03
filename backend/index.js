@@ -2,8 +2,6 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import usersRoute from './routes/user.routes.js';
-import contentRoutes from './routes/content.routes.js';
-import userUploadRoutes from './routes/userupload.routes.js'; 
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -16,18 +14,16 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:5173',  
+    origin: 'http://localhost:5173',
     methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
 }));
 
 app.use('/api/users', usersRoute);
-app.use('/api/content', contentRoutes);
-app.use('/api/userupload', userUploadRoutes);
+// Removed /api/content route setup
 
 app.use('/profilepic', express.static(path.join(__dirname, 'profilepic')));
 app.use('/usersUpload', express.static(path.join(__dirname, 'usersUpload')));
-
 
 app.get('/debug/usersUpload/:filename', (req, res) => {
     const filePath = path.join(__dirname, 'usersUpload', req.params.filename);

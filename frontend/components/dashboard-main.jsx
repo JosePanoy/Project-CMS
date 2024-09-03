@@ -27,7 +27,6 @@ function DashboardMain() {
       <>
         <DashboardSidebar user={user}/>
         <RightPanel user={user} />
-        <DashboardTimeline />
       </>
     );
 }
