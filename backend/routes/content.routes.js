@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import { upload } from '../middleware/userscontent.upload.js';
 import Content from '../models/content.model.js';
-import User from '../models/user.model.js'; 
+import User from '../models/user.model.js'; // Ensure you have a User model
 import path from 'path';
 import { authenticate } from '../middleware/authenticate.js';
 

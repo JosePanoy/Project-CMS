@@ -25,9 +25,9 @@ export const uploadContent = async (req, res) => {
     }
 };
 
-// Fetch content for a specific user
+
 export const getUserContent = async (req, res) => {
-    const userId = req.user.id; // Ensure user is authenticated
+    const userId = req.user.id; 
 
     try {
         const contents = await Content.find({ userId });
@@ -39,12 +39,3 @@ export const getUserContent = async (req, res) => {
 };
 
 
-export const getAllContent = async (req, res) => {
-    try {
-        const contents = await Content.find().populate('userId', 'name profilePic');
-        res.json(contents);
-    } catch (error) {
-        console.error('Error fetching content:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
-};

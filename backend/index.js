@@ -21,10 +21,20 @@ app.use(cors({
 }));
 
 app.use('/api/users', usersRoute);
-app.use('/api/content', contentRoutes); // Ensure this line is present
+app.use('/api/content', contentRoutes);
 
 app.use('/profilepic', express.static(path.join(__dirname, 'profilepic')));
 app.use('/usersUpload', express.static(path.join(__dirname, 'usersUpload')));
+
+app.get('/debug/usersUpload/:filename', (req, res) => {
+    const filePath = path.join(__dirname, 'usersUpload', req.params.filename);
+    res.sendFile(filePath);
+});
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
+});
 
 const PORT = process.env.PORT || 8000;
 const MONGOURL = process.env.MONGOURL;

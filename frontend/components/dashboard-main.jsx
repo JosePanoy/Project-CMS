@@ -5,6 +5,8 @@ import DashboardSidebar from "./dashboard-main-navbar";
 import RightPanel from "./right-panel-dashboard";
 import UserContent from "./dashboard-timeline";
 
+
+
 function DashboardMain() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -28,6 +30,8 @@ function DashboardMain() {
         <DashboardSidebar user={user}/>
         <RightPanel user={user} />
         <UserContent />
+
+
       </>
     );
 }

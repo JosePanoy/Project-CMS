@@ -1,3 +1,5 @@
+// File: UserContent.jsx
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../src/assets/css/dashboard-timeline.css';
@@ -63,7 +65,7 @@ const UserContent = () => {
                                 </div>
                             </div>
                             <div className="content-body">
-                            {content.caption && <p className="caption">{content.caption}</p>}
+                                {content.caption && <p className="caption">{content.caption}</p>}
                                 {isVideo ? (
                                     <video
                                         src={`http://localhost:8000/usersUpload/${content.fileName}`}
@@ -77,7 +79,6 @@ const UserContent = () => {
                                         className="content-image"
                                     />
                                 )}
-
                             </div>
                         </div>
                     );
