@@ -8,6 +8,8 @@ function DashboardSidebar({ user }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState(null);
+  const [caption, setCaption] = useState('');
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -33,6 +35,39 @@ function DashboardSidebar({ user }) {
       setLoading(false);
       handleLogout();
     }, 3500); // 3.5 seconds delay
+  };
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    if (!file || !caption) {
+      alert('File and caption are required.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('caption', caption);
+
+    setLoading(true);
+
+    try {
+      await fetch('http://localhost:8000/api/content/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+
+      alert('Upload successful');
+      setFile(null);
+      setCaption('');
+      closeModal();
+    } catch (error) {
+      console.error('Error uploading content:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -84,12 +119,26 @@ function DashboardSidebar({ user }) {
         <div className="modal-overlay-create">
           <div className="modal-content-create">
             <h3>Upload Content</h3>
-            <p>The upload functionality has been removed. This modal is now used for other purposes.</p>
-            <div className="modal-buttons-create">
-              <button onClick={closeModal} className="modal-btn-create cancel-btn-create">
-                Close
-              </button>
-            </div>
+            <form onSubmit={handleUpload}>
+              <input
+                type="file"
+                accept="image/*,video/*"
+                onChange={(e) => setFile(e.target.files[0])}
+              />
+              <textarea
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="Add a caption..."
+              />
+              <div className="modal-buttons-create">
+                <button type="submit" className="modal-btn-create">
+                  Upload
+                </button>
+                <button onClick={closeModal} className="modal-btn-create cancel-btn-create">
+                  Close
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -1,96 +1,72 @@
-.timeline-container {
+.user-content {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px;
-  max-width: 600px;
+  gap: 1rem;
+  width: 500px;
   margin: 0 auto;
-  background-color: #f8f9fa;
   margin-top: 50px;
 }
 
-.post-card {
-  background: #ffffff;
+.content-item {
   border: 1px solid #ddd;
   border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  background-color: #fff;
 }
 
-.post-header {
+.user-info {
   display: flex;
   align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  gap: 1rem;
 }
 
-.post-profile-pic {
-  width: 40px;
-  height: 40px;
+.user-profile-pic {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  margin-right: 10px;
+  object-fit: cover;
 }
 
-.post-user-name {
-  font-weight: bold;
-  color: #333;
-  font-size: 1.2rem;
-}
-
-.post-content {
-  width: 100%;
-  max-height: 400px;
-  overflow: hidden;
-}
-
-.post-image,
-.post-video {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.post-caption {
-  padding: 10px;
-  font-size: 1.1rem;
-  color: hsl(0, 0%, 13%);
-}
-
-
-/* dashboard-timeline.css */
-.post-header {
+.user-profile-pic-placeholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #ddd;
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #666;
 }
 
-.post-user-info {
-  margin-left: 10px;
+.user-details {
+  display: flex;
+  flex-direction: column;
 }
 
-.post-user-name {
-  display: block;
+.user-name {
   font-weight: bold;
 }
 
-.post-created-at {
-  display: block;
-  color: gray;
-  font-size: 0.8em;
+.post-date {
+  color: #666;
+  font-size: 0.8rem;
 }
 
-
-.post-actions {
-  display: flex;
-  gap: 15px;
-  margin: 10px;
+.content-body {
+  margin-top: 1rem;
 }
 
-.action-icon {
-  font-size: 22px;
-  cursor: pointer;
+.content-image, .content-media {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
-.save-icon {
-  margin-left: auto; 
+.caption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 0.5rem;
 }

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import '../src/assets/css/dashboard-main.css';
 import DashboardSidebar from "./dashboard-main-navbar";
 import RightPanel from "./right-panel-dashboard";
-import DashboardTimeline from "./dashboard-timeline";
+import UserContent from "./dashboard-timeline";
 
 function DashboardMain() {
     const navigate = useNavigate();
@@ -27,6 +27,7 @@ function DashboardMain() {
       <>
         <DashboardSidebar user={user}/>
         <RightPanel user={user} />
+        <UserContent />
       </>
     );
 }
