@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 import '../src/assets/css/signup.css'; // Make sure your CSS file is correct
 import Navbar from './navbar';
+import loginAnimation from '../src/assets/img/loading.gif'; // Import the loading animation
 
 function Signup() {
     const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ function Signup() {
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [loading, setLoading] = useState(false); // Add loading state
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -36,7 +38,7 @@ function Signup() {
             setError('All fields are required');
             return;
         }
-    
+   
         const data = new FormData();
         data.append('name', name);
         data.append('nickName', nickName);
@@ -46,6 +48,7 @@ function Signup() {
         data.append('password', password);
         if (profilePic) data.append('profilePic', profilePic);
     
+        setLoading(true); // Show loading overlay
         try {
             await axios.post('http://localhost:8000/api/users/register', data, {
                 headers: {
@@ -61,13 +64,15 @@ function Signup() {
                 contact: '',
                 password: '',
                 profilePic: null
-            }); 
+            });
             setTimeout(() => {
+                setLoading(false); // Hide loading overlay
                 setSuccess('');
                 setError('');
                 navigate('/login');
-            }, 5000);
+            }, 3500);
         } catch (error) {
+            setLoading(false); // Hide loading overlay
             setError('Failed to register. Please try again.');
             console.error(error);
         }
@@ -159,6 +164,11 @@ function Signup() {
                 <button type="submit">Sign Up</button>
             </form>
         </div>
+        {loading && (
+            <div className="loading-overlay">
+                <img src={loginAnimation} alt="Loading" />
+            </div>
+        )}
         </>
     );
 }

@@ -1,3 +1,23 @@
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.308);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .loading-overlay img {
+    width: 450px;
+    height: 300px;
+    border-radius: 8px;
+  }
+
+  
 .signup-container {
     display: flex;
     flex-direction: column;

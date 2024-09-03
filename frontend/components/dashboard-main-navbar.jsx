@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { FaHome, FaSearch, FaEnvelope, FaBell, FaUser, FaSignOutAlt, FaUpload } from 'react-icons/fa';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import '../src/assets/css/dashboard-main-sidebar.css'; // Adjust the path as needed
+import '../src/assets/css/dashboard-main-sidebar.css';
+import loadingAnimation from '../src/assets/img/loading.gif';
 
 function DashboardSidebar({ user }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState(null);
   const [caption, setCaption] = useState('');
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -32,8 +34,12 @@ function DashboardSidebar({ user }) {
   const closeLogoutConfirmModal = () => setIsLogoutConfirmOpen(false);
 
   const confirmLogout = () => {
-    handleLogout();
-    closeLogoutConfirmModal();
+    setIsLogoutConfirmOpen(false);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      handleLogout();
+    }, 3500); // 3.5 seconds delay
   };
 
   const handleFileChange = (e) => {
@@ -46,8 +52,8 @@ function DashboardSidebar({ user }) {
 
   const handleUpload = async () => {
     if (!file || !caption) {
-        alert('Please upload a file and add a caption.');
-        return;
+      alert('Please upload a file and add a caption.');
+      return;
     }
 
     const formData = new FormData();
@@ -57,18 +63,18 @@ function DashboardSidebar({ user }) {
     formData.append('userId', user._id);
 
     try {
-        await axios.post('http://localhost:8000/api/userupload/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
-        
-        alert('Content uploaded successfully!');
-        closeModal();
+      await axios.post('http://localhost:8000/api/userupload/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      alert('Content uploaded successfully!');
+      closeModal();
     } catch (error) {
-        alert('Failed to upload content.');
-        console.error('Upload Error:', error.response?.data.message || error.message);
+      alert('Failed to upload content.');
+      console.error('Upload Error:', error.response?.data.message || error.message);
     }
   };
 
@@ -158,6 +164,12 @@ function DashboardSidebar({ user }) {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {loading && (
+        <div className="loading-overlay">
+          <img src={loadingAnimation} alt="Loading" />
         </div>
       )}
     </div>

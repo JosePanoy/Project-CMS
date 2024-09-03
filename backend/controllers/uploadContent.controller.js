@@ -22,7 +22,7 @@ export const uploadContent = async (req, res) => {
 
 export const uploadContentList = async (req, res) => {
     try {
-        const contents = await Content.find().populate('user', 'name profilePic'); // Populate user details
+        const contents = await Content.find().populate('user', 'name profilePic'); 
         res.json(contents);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching content', error });

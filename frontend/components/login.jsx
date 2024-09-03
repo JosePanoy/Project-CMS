@@ -4,12 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../src/assets/css/login.css';
 import Navbar from './navbar';
+import loginAnimation from '../src/assets/img/loading.gif';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState(''); 
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
@@ -18,29 +20,34 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-        const response = await axios.post('http://localhost:8000/api/users/login', {
-            email, 
-            password
-        }, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+      const response = await axios.post('http://localhost:8000/api/users/login', {
+        email,
+        password
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
-        localStorage.setItem('token', response.data.token);
+      localStorage.setItem('token', response.data.token);
 
-        const userInfoResponse = await axios.get('http://localhost:8000/api/users/info', {
-            headers: {
-                'Authorization': `Bearer ${response.data.token}`
-            }
-        });
-        localStorage.setItem('user', JSON.stringify(userInfoResponse.data));
+      const userInfoResponse = await axios.get('http://localhost:8000/api/users/info', {
+        headers: {
+          'Authorization': `Bearer ${response.data.token}`
+        }
+      });
+      localStorage.setItem('user', JSON.stringify(userInfoResponse.data));
 
+      setTimeout(() => {
+        setLoading(false);
         navigate('/dashboard');
+      }, 3500); // 5 seconds delay
     } catch (error) {
-        const message = error.response?.data.message || 'Login failed';
-        setErrorMessage(message);
+      setLoading(false);
+      const message = error.response?.data.message || 'Login failed';
+      setErrorMessage(message);
     }
   };
 
@@ -53,10 +60,10 @@ function Login() {
           <label htmlFor="email">Email</label>
           <input
             type="text"
-            id="email" 
-            name="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
+            id="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
 
@@ -89,6 +96,12 @@ function Login() {
           <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
         </div>
       </div>
+
+      {loading && (
+        <div className="loading-overlay">
+          <img src={loginAnimation} alt="Loading" />
+        </div>
+      )}
     </>
   );
 }
