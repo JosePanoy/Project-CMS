@@ -1,14 +1,14 @@
 import React from 'react';
 import '../src/assets/css/user-profile.css'; 
 import DashboardMainNavbar from './dashboard-main-navbar';
-import DashboardTimeline from './dashboard-timeline';
+
 
 function UserProfile() {
-  // Get user data from localStorage or some other state management
+
   const user = JSON.parse(localStorage.getItem('user'));
 
   if (!user) {
-    return <div>Loading...</div>; // Handle loading state if user data is not available
+    return <div>Loading...</div>; 
   }
 
   return (
@@ -43,7 +43,6 @@ function UserProfile() {
           </div>
         </div>
       </div>
-      <DashboardTimeline />
     </>
   );
 }

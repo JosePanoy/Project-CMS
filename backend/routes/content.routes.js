@@ -1,9 +1,9 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import { upload } from '../middleware/userscontent.upload.js';
-import Content from '../models/content.model.js';
-import User from '../models/user.model.js'; // Ensure you have a User model
 import path from 'path';
+import { upload } from '../middleware/userscontent.upload.js';
+import { uploadContent, getNewsfeed } from '../controllers/content.controller.js';
+import Content from '../models/content.model.js';
+import User from '../models/user.model.js';
 import { authenticate } from '../middleware/authenticate.js';
 
 const router = express.Router();
@@ -32,16 +32,7 @@ router.post('/upload', authenticate, upload.single('file'), async (req, res) => 
     }
 });
 
+router.get('/newsfeed', authenticate, getNewsfeed);
 
-router.get('/all-content', authenticate, async (req, res) => {
-    try {
-
-        const contents = await Content.find().populate('userId', 'name profilePic').exec();
-        res.json(contents);
-    } catch (error) {
-        console.error('Error fetching content:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
 
 export default router;

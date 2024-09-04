@@ -39,3 +39,25 @@ export const getUserContent = async (req, res) => {
 };
 
 
+export const getNewsfeed = async (req, res) => {
+    try {
+        const contents = await Content.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'userDetails'
+                }
+            },
+            {
+                $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true }
+            }
+        ]);
+        res.json(contents);
+    } catch (error) {
+        console.error('Error fetching newsfeed:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+

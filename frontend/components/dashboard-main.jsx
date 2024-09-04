@@ -4,6 +4,7 @@ import '../src/assets/css/dashboard-main.css';
 import DashboardSidebar from "./dashboard-main-navbar";
 import RightPanel from "./right-panel-dashboard";
 import UserContent from "./dashboard-timeline";
+import Feed from "./feed";
 
 
 
@@ -29,7 +30,7 @@ function DashboardMain() {
       <>
         <DashboardSidebar user={user}/>
         <RightPanel user={user} />
-        <UserContent />
+        <Feed />
 
 
       </>
