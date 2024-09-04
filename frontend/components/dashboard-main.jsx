@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import '../src/assets/css/dashboard-main.css';
 import DashboardSidebar from "./dashboard-main-navbar";
 import RightPanel from "./right-panel-dashboard";
-import UserContent from "./dashboard-timeline";
 import Feed from "./feed";
 
 

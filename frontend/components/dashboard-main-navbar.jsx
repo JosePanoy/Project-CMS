@@ -5,8 +5,8 @@ import '../src/assets/css/dashboard-main-sidebar.css';
 import loadingAnimation from '../src/assets/img/loading.gif';
 
 function DashboardSidebar({ user }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
   const [caption, setCaption] = useState('');
@@ -18,23 +18,19 @@ function DashboardSidebar({ user }) {
     navigate('/');
   };
 
-  const goHome = () => {
-    navigate('/dashboard');
-  };
+  const openUploadModal = () => setIsUploadModalOpen(true);
+  const closeUploadModal = () => setIsUploadModalOpen(false);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  const openLogoutConfirmModal = () => setIsLogoutConfirmOpen(true);
-  const closeLogoutConfirmModal = () => setIsLogoutConfirmOpen(false);
+  const openLogoutModal = () => setIsLogoutModalOpen(true);
+  const closeLogoutModal = () => setIsLogoutModalOpen(false);
 
   const confirmLogout = () => {
-    setIsLogoutConfirmOpen(false);
+    setIsLogoutModalOpen(false);
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
       handleLogout();
-    }, 3500); // 3.5 seconds delay
+    }, 3500);
   };
 
   const handleUpload = async (e) => {
@@ -62,7 +58,7 @@ function DashboardSidebar({ user }) {
       alert('Upload successful');
       setFile(null);
       setCaption('');
-      closeModal();
+      closeUploadModal();
     } catch (error) {
       console.error('Error uploading content:', error);
     } finally {
@@ -71,71 +67,73 @@ function DashboardSidebar({ user }) {
   };
 
   return (
-    <div className="sidebar">
+    <div className="dashboard-sidebar">
       <Link style={{ textDecoration: 'none' }} to="/dashboard">
         <h2>Panoy Socials</h2>
       </Link>
-      <div className="sidebar-content">
-        <button className="sidebar-btn" onClick={goHome}>
+      <div className="dashboard-sidebar-content">
+        <button className="dashboard-sidebar-btn" onClick={() => navigate('/dashboard')}>
           <FaHome />
           <span>Home</span>
         </button>
-        <button className="sidebar-btn">
+        <button className="dashboard-sidebar-btn">
           <FaSearch />
           <span>Search</span>
         </button>
-        <button className="sidebar-btn">
+        <button className="dashboard-sidebar-btn">
           <FaEnvelope />
           <span>Messages</span>
         </button>
-        <button className="sidebar-btn">
+        <button className="dashboard-sidebar-btn">
           <FaBell />
           <span>Notifications</span>
         </button>
-        <Link to="/user-profile" className="sidebar-btn profile-btn">
+        <Link to="/user-profile" className="dashboard-sidebar-btn dashboard-profile-btn">
           {user && user.profilePic ? (
             <img
               src={`http://localhost:8000/profilepic/${user.profilePic}`}
               alt="Profile"
-              className="profile-pic-sidebar"
+              className="dashboard-profile-pic-sidebar"
             />
           ) : (
             <FaUser />
           )}
           <span>Profile</span>
         </Link>
-        <button className="sidebar-btn upload-btn" onClick={openModal}>
+        <button className="dashboard-sidebar-btn dashboard-upload-btn" onClick={openUploadModal}>
           <FaUpload />
           <span>Create</span>
         </button>
-        <button className="sidebar-btn logout-btn" onClick={openLogoutConfirmModal}>
+        <button className="dashboard-sidebar-btn dashboard-logout-btn" onClick={openLogoutModal}>
           <FaSignOutAlt />
           <span>Logout</span>
         </button>
       </div>
-      <div className="vertical-line"></div>
+      <div className="dashboard-vertical-line"></div>
 
-      {isModalOpen && (
-        <div className="modal-overlay-create">
-          <div className="modal-content-create">
+      {isUploadModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
             <h3>Upload Content</h3>
-            <form onSubmit={handleUpload}>
+            <form onSubmit={handleUpload} className="upload-form">
               <input
                 type="file"
                 accept="image/*,video/*"
                 onChange={(e) => setFile(e.target.files[0])}
+                className="modal-input"
               />
               <textarea
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
-                placeholder="Add a caption..."
+                placeholder="Write a caption..."
+                className="modal-textarea"
               />
-              <div className="modal-buttons-create">
-                <button type="submit" className="modal-btn-create">
+              <div className="modal-buttons">
+                <button type="submit" className="modal-button modal-button-upload">
                   Upload
                 </button>
-                <button onClick={closeModal} className="modal-btn-create cancel-btn-create">
-                  Close
+                <button type="button" onClick={closeUploadModal} className="modal-button modal-button-cancel">
+                  Cancel
                 </button>
               </div>
             </form>
@@ -143,15 +141,15 @@ function DashboardSidebar({ user }) {
         </div>
       )}
 
-      {isLogoutConfirmOpen && (
-        <div className="logout-modal-overlay">
-          <div className="logout-modal-content">
+      {isLogoutModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content logout-modal-content">
             <p>Are you sure you want to logout?</p>
-            <div className="logout-modal-buttons">
-              <button onClick={confirmLogout} className="logout-confirm-btn">
+            <div className="modal-buttons">
+              <button onClick={confirmLogout} className="modal-button modal-button-logout">
                 Logout
               </button>
-              <button onClick={closeLogoutConfirmModal} className="logout-cancel-btn">
+              <button onClick={closeLogoutModal} className="modal-button modal-button-cancel">
                 Cancel
               </button>
             </div>

@@ -1,85 +1,93 @@
-.feed {
+.feed-container {
     padding: 20px;
     max-width: 500px;
     margin: 0 auto;
+    position: relative;
 }
 
-.feed-item {
+.feed-item-container {
     border-bottom: 1px solid #ddd;
     padding: 10px 0;
     position: relative;
 }
 
-.user-info {
+.feed-item-user-info {
     display: flex;
     align-items: center;
 }
 
-.user-profile-pic {
+.feed-item-user-profile-pic {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
 }
 
-.user-details {
+.feed-item-user-details {
     display: flex;
     flex-direction: column;
 }
 
-.user-name {
+.feed-item-user-name {
     font-weight: bold;
 }
 
-.post-date {
+.feed-item-post-date {
     font-size: 0.8em;
     color: #666;
 }
 
-.content-body {
+.feed-item-content-body {
     margin-top: 10px;
 }
 
-.caption {
+.feed-item-caption {
     margin-bottom: 10px;
 }
 
-.content-image, .content-media {
+.feed-item-content-image,
+.feed-item-content-media {
     max-width: 100%;
     height: auto;
 }
 
-.icons {
+.feed-item-icons {
     display: flex;
     align-items: center;
     margin-top: 10px;
 }
 
-.icon {
+.feed-item-icon {
     font-size: 1.2em;
     cursor: pointer;
     margin-right: 15px;
 }
 
-.heart-icon {
+.feed-item-heart-icon {
+    margin-right: 10px;
+    color: black; 
+    cursor: pointer;
+}
+.feed-item-heart-icon.liked {
+    color: red; 
+    cursor: pointer;
+}
+
+.feed-item-comment-icon {
     margin-right: 10px;
 }
 
-.comment-icon {
-    margin-right: 10px;
-}
-
-.save-icon {
+.feed-item-save-icon {
     margin-left: auto;
 }
 
-.divider {
+.feed-item-divider {
     border-top: 1px solid #ddd;
     margin: 10px 0;
 }
 
-/****************/
-.modal {
+/* Modal overlay for Feed modal */
+.feed-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -89,10 +97,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 1000; /* Ensure it's above other content but below Sidebar modals */
 }
 
-.modal-content {
+.feed-modal-content {
     background: #fff;
     width: 1000px;
     height: 90%;
@@ -100,27 +108,28 @@
     border-radius: 8px;
     overflow: hidden;
     position: relative;
+    z-index: 10001; /* Ensure it's above the modal overlay */
 }
 
-.modal-body {
+.feed-modal-body {
     display: flex;
     width: 100%;
     height: 100%;
     position: relative;
 }
 
-.modal-body::before {
+.feed-modal-body::before {
     content: '';
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 50%; /* Center the separator */
+    left: 50%;
     width: 1px;
     background-color: #ddd;
     transform: translateX(-50%);
 }
 
-.modal-image {
+.feed-modal-image {
     width: 50%;
     height: auto;
     max-height: 100%;
@@ -128,83 +137,83 @@
     margin-right: 5px;
 }
 
-.modal-right {
+.feed-modal-right {
     width: 50%;
     padding: 15px;
     display: flex;
     flex-direction: column;
 }
 
-.modal-header {
+.feed-modal-header {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.separator {
+.feed-modal-separator {
     width: 100%;
     height: 1px;
     background-color: #ddd;
-    margin: 10px 0; 
+    margin: 10px 0;
 }
 
-.modal-profile-pic {
+.feed-modal-profile-pic {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
 }
 
-.modal-user-info {
+.feed-modal-user-info {
     display: flex;
     flex-direction: column;
 }
 
-.modal-user-name {
+.feed-modal-user-name {
     font-weight: bold;
     cursor: pointer;
 }
 
-.modal-user-nickname {
+.feed-modal-user-nickname {
     color: #666;
     cursor: pointer;
     text-align: left;
     font-size: 0.8rem;
 }
 
-.modal-caption {
+.feed-modal-caption {
     margin-top: 5px;
     margin-bottom: 15px;
     text-align: left;
     cursor: default;
 }
 
-.modal-icons {
+.feed-modal-icons {
     display: flex;
     align-items: center;
-    margin-top: auto; 
+    margin-top: auto;
 }
 
-.modal-icons .icon {
+.feed-modal-icons .feed-modal-icon {
     font-size: 1.5em;
     margin-right: 15px;
     cursor: pointer;
 }
 
-.upload-time {
+.feed-modal-upload-time {
     font-size: 0.8em;
     color: #666;
     margin-bottom: 10px;
 }
 
-.comments-section {
+.feed-modal-comments-section {
     border-top: 1px solid #ddd;
     padding-top: 10px;
     display: flex;
     flex-direction: column;
 }
 
-.comment-input {
+.feed-modal-comment-input {
     width: 100%;
     padding: 10px;
     border: none;
@@ -213,14 +222,15 @@
     font-size: 14px;
 }
 
-.close {
+.feed-modal-close {
     position: absolute;
     top: 10px;
     right: 15px;
     font-size: 1.5em;
     cursor: pointer;
+    z-index: 7; /* Ensure it's above the modal content */
 }
 
-.close:hover {
+.feed-modal-close:hover {
     color: #333;
 }

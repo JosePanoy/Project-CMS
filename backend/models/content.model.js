@@ -5,6 +5,7 @@ const contentSchema = new mongoose.Schema({
     caption: { type: String, required: true },
     fileName: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
+    likes: [{ type: String }]
 });
 
 const Content = mongoose.models.Content || mongoose.model('Content', contentSchema);

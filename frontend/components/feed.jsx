@@ -8,19 +8,36 @@ const Feed = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedContent, setSelectedContent] = useState(null);
+    const [likedPosts, setLikedPosts] = useState({});
+    const userId = localStorage.getItem('userId');
 
     useEffect(() => {
         const fetchContents = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/content/newsfeed', {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                setContents(response.data);
+                const [contentsResponse, likesResponse] = await Promise.all([
+                    axios.get('http://localhost:8000/api/content/newsfeed', {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }),
+                    axios.get('http://localhost:8000/api/user/liked-posts', {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        }
+                    })
+                ]);
+
+                const fetchedContents = contentsResponse.data;
+                const likedPostsData = likesResponse.data;
+
+                setContents(fetchedContents);
+                setLikedPosts(likedPostsData.reduce((acc, postId) => {
+                    acc[postId] = true;
+                    return acc;
+                }, {}));
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching newsfeed:', error);
+                console.error('Error fetching data:', error);
                 setError('Failed to fetch content');
                 setLoading(false);
             }
@@ -29,22 +46,39 @@ const Feed = () => {
         fetchContents();
     }, []);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
+    const handleLikeClick = async (contentId) => {
+        try {
+            const isLiked = likedPosts[contentId];
+            const response = await axios.post(
+                'http://localhost:8000/api/content/like',
+                { postId: contentId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            );
 
-    const handleCommentClick = (content) => {
-        setSelectedContent(content);
+            setContents(contents.map(content => 
+                content._id === contentId ? { ...content, ...response.data } : content
+            ));
+
+            setLikedPosts(prev => ({
+                ...prev,
+                [contentId]: !isLiked
+            }));
+        } catch (error) {
+            console.error('Error liking post:', error);
+        }
     };
 
-    const closeModal = () => {
-        setSelectedContent(null);
-    };
-    
+    if (loading) return <div className="feed-loading">Loading...</div>;
+    if (error) return <div className="feed-error">{error}</div>;
 
     return (
-        <div className="feed">
+        <div className="feed-container">
             {contents.length === 0 ? (
-                <p>No content available</p>
+                <p className="feed-no-content">No content available</p>
             ) : (
                 contents.map(content => {
                     const isVideo = content.fileName.endsWith('.mp4');
@@ -55,60 +89,65 @@ const Feed = () => {
                     const profilePic = user.profilePic || 'default-profile-pic.jpg';
                     const userName = user.name || 'Unknown User';
 
+                    const isLiked = likedPosts[content._id];
+
                     return (
-                        <div key={content._id} className="feed-item">
-                            <div className="user-info">
+                        <div key={content._id} className="feed-item-container">
+                            <div className="feed-item-user-info">
                                 <img
                                     src={`http://localhost:8000/profilepic/${profilePic}`}
                                     alt="Profile"
-                                    className="user-profile-pic"
+                                    className="feed-item-user-profile-pic"
                                 />
-                                <div className="user-details">
-                                    <span className="user-name">{userName}</span>
-                                    <span className="post-date">{formattedDate}</span>
+                                <div className="feed-item-user-details">
+                                    <span className="feed-item-user-name">{userName}</span>
+                                    <span className="feed-item-post-date">{formattedDate}</span>
                                 </div>
                             </div>
-                            <div className="content-body">
-                                {content.caption && <p className="caption">{content.caption}</p>}
+                            <div className="feed-item-content-body">
+                                {content.caption && <p className="feed-item-caption">{content.caption}</p>}
                                 {isVideo ? (
                                     <video
                                         src={`http://localhost:8000/usersUpload/${content.fileName}`}
                                         controls
-                                        className="content-media"
+                                        className="feed-item-content-media"
                                     />
                                 ) : (
                                     <img
                                         src={`http://localhost:8000/usersUpload/${content.fileName}`}
                                         alt={content.caption}
-                                        className="content-image"
+                                        className="feed-item-content-image"
                                     />
                                 )}
-                                <div className="icons">
-                                    <FaHeart className="icon heart-icon" />
-                                    <FaComment
-                                        className="icon comment-icon"
-                                        onClick={() => handleCommentClick(content)}
+                                <div className="feed-item-icons">
+                                    <FaHeart 
+                                        className={`feed-item-icon feed-item-heart-icon ${isLiked ? 'liked' : ''}`} 
+                                        onClick={() => handleLikeClick(content._id)} 
                                     />
-                                    <FaBookmark className="icon save-icon" />
+                                    <FaComment
+                                        className="feed-item-icon feed-item-comment-icon"
+                                        onClick={() => setSelectedContent(content)}
+                                    />
+                                    <FaBookmark className="feed-item-icon feed-item-save-icon" />
                                 </div>
                             </div>
-                            <div className="divider"></div>
+                            <div className="feed-item-divider"></div>
                         </div>
                     );
                 })
             )}
             {selectedContent && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <span className="close" onClick={closeModal}>&times;</span>
-                        <div className="modal-body">
+                <div className="feed-modal">
+                    <div className="feed-modal-content">
+                        <span className="feed-modal-close" onClick={() => setSelectedContent(null)}>&times;</span>
+                        <div className="feed-modal-body">
                             <img
                                 src={`http://localhost:8000/usersUpload/${selectedContent.fileName}`}
                                 alt={selectedContent.caption}
-                                className="modal-image"
+                                className="feed-modal-image"
                             />
-                            <div className="modal-right">
-                                <div className="modal-header">
+                            <div className="feed-modal-right">
+                                <div className="feed-modal-header">
                                     <img
                                         src={
                                             selectedContent.userDetails.profilePic
@@ -116,24 +155,27 @@ const Feed = () => {
                                             : 'http://localhost:8000/profilepic/default-profile-pic.jpg'
                                         }
                                         alt="Profile"
-                                        className="modal-profile-pic"
+                                        className="feed-modal-profile-pic"
                                     />
-                                    <div className="modal-user-info">
-                                        <span className="modal-user-name">{selectedContent.userDetails.name}</span>
-                                        <span className="modal-user-nickname">@{selectedContent.userDetails.nickName}</span>
+                                    <div className="feed-modal-user-info">
+                                        <span className="feed-modal-user-name">{selectedContent.userDetails.name}</span>
+                                        <span className="feed-modal-user-nickname">@{selectedContent.userDetails.nickName}</span>
                                     </div>
                                 </div>
-                                <div className="separator"></div>
-                                <p className="modal-caption">{selectedContent.caption}</p>
-                                <div className="modal-icons">
-                                    <FaHeart className="icon heart-icon" />
-                                    <FaComment className="icon comment-icon" />
+                                <div className="feed-modal-separator"></div>
+                                <p className="feed-modal-caption">{selectedContent.caption}</p>
+                                <div className="feed-modal-icons">
+                                    <FaHeart 
+                                        className={`feed-modal-icon feed-modal-heart-icon ${likedPosts[selectedContent._id] ? 'liked' : ''}`} 
+                                        onClick={() => handleLikeClick(selectedContent._id)} 
+                                    />
+                                    <FaComment className="feed-modal-icon feed-modal-comment-icon" />
                                 </div>
-                                <span className="upload-time">
+                                <span className="feed-modal-upload-time">
                                     {new Date(selectedContent.createdAt).toLocaleString('en-US', { month: 'short' })} {new Date(selectedContent.createdAt).getDate()}, {new Date(selectedContent.createdAt).getFullYear()} {new Date(selectedContent.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
                                 </span>
-                                <div className="comments-section">
-                                    <input type="text" placeholder="Add a comment..." className="comment-input" />
+                                <div className="feed-modal-comments-section">
+                                    <input type="text" placeholder="Add a comment..." className="feed-modal-comment-input" />
                                 </div>
                             </div>
                         </div>

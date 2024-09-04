@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { upload } from '../middleware/userscontent.upload.js';
-import { uploadContent, getNewsfeed } from '../controllers/content.controller.js';
+import { uploadContent, getNewsfeed, likePost } from '../controllers/content.controller.js';
 import Content from '../models/content.model.js';
 import User from '../models/user.model.js';
 import { authenticate } from '../middleware/authenticate.js';
@@ -33,6 +33,7 @@ router.post('/upload', authenticate, upload.single('file'), async (req, res) => 
 });
 
 router.get('/newsfeed', authenticate, getNewsfeed);
+router.post('/like', authenticate, likePost);
 
 
 export default router;

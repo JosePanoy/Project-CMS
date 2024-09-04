@@ -61,3 +61,24 @@ export const getNewsfeed = async (req, res) => {
     }
 };
 
+///add like function 
+export const likePost = async (req, res) => {
+    const { postId } = req.body;
+    const userId = req.user.id;
+  
+    try {
+      const post = await Content.findById(postId);
+      if (!post) return res.status(404).json({ message: 'Post not found' });
+  
+      if (post.likes.includes(userId)) {
+        post.likes = post.likes.filter(id => id !== userId); // Unlike if already liked
+      } else {
+        post.likes.push(userId); // Add like
+      }
+  
+      await post.save();
+      res.json(post);
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
