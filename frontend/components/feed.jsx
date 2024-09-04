@@ -11,38 +11,24 @@ const Feed = () => {
     const [likedPosts, setLikedPosts] = useState({});
     const userId = localStorage.getItem('userId');
 
+    const fetchContents = async () => {
+        try {
+            const contentsResponse = await axios.get('http://localhost:8000/api/content/newsfeed', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const fetchedContents = contentsResponse.data;
+            setContents(fetchedContents);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setError('Failed to fetch content');
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchContents = async () => {
-            try {
-                const [contentsResponse, likesResponse] = await Promise.all([
-                    axios.get('http://localhost:8000/api/content/newsfeed', {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                        }
-                    }),
-                    axios.get('http://localhost:8000/api/user/liked-posts', {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                        }
-                    })
-                ]);
-
-                const fetchedContents = contentsResponse.data;
-                const likedPostsData = likesResponse.data;
-
-                setContents(fetchedContents);
-                setLikedPosts(likedPostsData.reduce((acc, postId) => {
-                    acc[postId] = true;
-                    return acc;
-                }, {}));
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setError('Failed to fetch content');
-                setLoading(false);
-            }
-        };
-
         fetchContents();
     }, []);
 
@@ -70,6 +56,11 @@ const Feed = () => {
         } catch (error) {
             console.error('Error liking post:', error);
         }
+    };
+
+    // Function to be called by DashboardSidebar after upload
+    const refreshContents = () => {
+        fetchContents();
     };
 
     if (loading) return <div className="feed-loading">Loading...</div>;
@@ -172,11 +163,8 @@ const Feed = () => {
                                     <FaComment className="feed-modal-icon feed-modal-comment-icon" />
                                 </div>
                                 <span className="feed-modal-upload-time">
-                                    {new Date(selectedContent.createdAt).toLocaleString('en-US', { month: 'short' })} {new Date(selectedContent.createdAt).getDate()}, {new Date(selectedContent.createdAt).getFullYear()} {new Date(selectedContent.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                    {new Date(selectedContent.createdAt).toLocaleString()}
                                 </span>
-                                <div className="feed-modal-comments-section">
-                                    <input type="text" placeholder="Add a comment..." className="feed-modal-comment-input" />
-                                </div>
                             </div>
                         </div>
                     </div>

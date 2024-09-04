@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import '../src/assets/css/dashboard-main.css';
-import DashboardSidebar from "./dashboard-main-navbar";
+import DashboardSidebar from "./dashboard-main-navbar"; // Ensure correct import path
 import RightPanel from "./right-panel-dashboard";
 import Feed from "./feed";
-
-
 
 function DashboardMain() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const [feedKey, setFeedKey] = useState(Date.now());
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -25,14 +24,16 @@ function DashboardMain() {
         }
     }, [navigate]);
 
+    const handleContentUpload = () => {
+        setFeedKey(Date.now()); // Change key to force Feed component to refetch
+    };
+
     return (
-      <>
-        <DashboardSidebar user={user}/>
-        <RightPanel user={user} />
-        <Feed />
-
-
-      </>
+        <>
+            <DashboardSidebar onContentUpload={handleContentUpload} user={user} />
+            <RightPanel user={user} />
+            <Feed key={feedKey} />
+        </>
     );
 }
 

@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import '../src/assets/css/dashboard-main-sidebar.css';
 import loadingAnimation from '../src/assets/img/loading.gif';
 
-function DashboardSidebar({ user }) {
+function DashboardSidebar({ user, onContentUpload }) {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,6 +59,11 @@ function DashboardSidebar({ user }) {
       setFile(null);
       setCaption('');
       closeUploadModal();
+
+      // Notify the parent component to refetch or update content
+      if (onContentUpload) {
+        onContentUpload();
+      }
     } catch (error) {
       console.error('Error uploading content:', error);
     } finally {
