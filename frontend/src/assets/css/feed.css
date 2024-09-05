@@ -234,3 +234,41 @@
 .feed-modal-close:hover {
     color: #333;
 }
+
+
+/* feed.css */
+.feed-modal-comments {
+    margin-top: 10px;
+}
+
+.feed-modal-comment {
+    margin-bottom: 10px;
+}
+
+.feed-modal-comment-author {
+    font-weight: bold;
+}
+
+.feed-modal-comment-text {
+    margin-left: 10px;
+}
+
+.feed-modal-comment-timestamp {
+    display: block;
+    font-size: 0.8em;
+    color: #888;
+}
+
+.feed-modal-add-comment {
+    margin-top: 20px;
+}
+
+.feed-modal-add-comment textarea {
+    width: 100%;
+    height: 60px;
+}
+
+.feed-modal-add-comment button {
+    display: block;
+    margin-top: 10px;
+}

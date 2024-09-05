@@ -1,3 +1,4 @@
+// Feed.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaHeart, FaComment, FaBookmark } from 'react-icons/fa';
@@ -9,6 +10,8 @@ const Feed = () => {
     const [error, setError] = useState(null);
     const [selectedContent, setSelectedContent] = useState(null);
     const [likedPosts, setLikedPosts] = useState([]);
+    const [comments, setComments] = useState({});
+    const [newComment, setNewComment] = useState('');
     const userId = localStorage.getItem('userId');
 
     // Fetch contents and liked posts
@@ -40,10 +43,19 @@ const Feed = () => {
         }
     };
 
-    // Fetch contents on component mount
-    useEffect(() => {
-        fetchContents();
-    }, []);
+    // Fetch comments for a post
+    const fetchComments = async (postId) => {
+        try {
+            const response = await axios.get(`http://localhost:8000/api/content/comments/${postId}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            setComments(prevComments => ({ ...prevComments, [postId]: response.data }));
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+        }
+    };
 
     // Handle like/unlike functionality
     const handleLikeClick = async (contentId) => {
@@ -72,6 +84,30 @@ const Feed = () => {
             console.error('Error liking post:', error);
         }
     };
+
+    // Handle new comment
+    const handleCommentSubmit = async (postId) => {
+        try {
+            await axios.post(
+                'http://localhost:8000/api/content/comment',
+                { postId, text: newComment },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            );
+            setNewComment('');
+            fetchComments(postId);  // Refresh comments
+        } catch (error) {
+            console.error('Error adding comment:', error);
+        }
+    };
+
+    // Fetch contents on component mount
+    useEffect(() => {
+        fetchContents();
+    }, []);
 
     if (loading) return <div className="feed-loading">Loading...</div>;
     if (error) return <div className="feed-error">{error}</div>;
@@ -128,7 +164,10 @@ const Feed = () => {
                                     />
                                     <FaComment
                                         className="feed-item-icon feed-item-comment-icon"
-                                        onClick={() => setSelectedContent(content)}
+                                        onClick={() => {
+                                            setSelectedContent(content);
+                                            fetchComments(content._id);
+                                        }}
                                     />
                                     <FaBookmark className="feed-item-icon feed-item-save-icon" />
                                 </div>
@@ -177,6 +216,27 @@ const Feed = () => {
                                 <span className="feed-modal-upload-time">
                                     {new Date(selectedContent.createdAt).toLocaleString()}
                                 </span>
+                                <div className="feed-modal-comments">
+                                    {comments[selectedContent._id] && comments[selectedContent._id].map(comment => (
+                                        <div key={comment._id} className="feed-modal-comment">
+                                            <span className="feed-modal-comment-author">{comment.author}</span>
+                                            <span className="feed-modal-comment-text">{comment.text}</span>
+                                            <span className="feed-modal-comment-timestamp">
+                                                {new Date(comment.timestamp).toLocaleString()}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="feed-modal-add-comment">
+                                    <textarea
+                                        value={newComment}
+                                        onChange={(e) => setNewComment(e.target.value)}
+                                        placeholder="Add a comment..."
+                                    ></textarea>
+                                    <button onClick={() => handleCommentSubmit(selectedContent._id)}>
+                                        Post
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
