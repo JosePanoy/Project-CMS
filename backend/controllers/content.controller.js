@@ -25,9 +25,9 @@ export const uploadContent = async (req, res) => {
     }
 };
 
-
+// Get user-specific content
 export const getUserContent = async (req, res) => {
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
     try {
         const contents = await Content.find({ userId });
@@ -38,8 +38,10 @@ export const getUserContent = async (req, res) => {
     }
 };
 
-
+// Get newsfeed with like status
 export const getNewsfeed = async (req, res) => {
+    const userId = req.user.id; // Logged-in user ID
+
     try {
         const contents = await Content.aggregate([
             {
@@ -54,31 +56,42 @@ export const getNewsfeed = async (req, res) => {
                 $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true }
             }
         ]);
-        res.json(contents);
+
+        // Add isLiked field to each content
+        const contentsWithLikeStatus = contents.map(content => {
+            const isLiked = content.likes.includes(userId);
+            return {
+                ...content,
+                isLiked
+            };
+        });
+
+        res.json(contentsWithLikeStatus);
     } catch (error) {
         console.error('Error fetching newsfeed:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };
 
-///add like function 
+// Handle like/unlike functionality
 export const likePost = async (req, res) => {
     const { postId } = req.body;
     const userId = req.user.id;
-  
+
     try {
-      const post = await Content.findById(postId);
-      if (!post) return res.status(404).json({ message: 'Post not found' });
-  
-      if (post.likes.includes(userId)) {
-        post.likes = post.likes.filter(id => id !== userId); // Unlike if already liked
-      } else {
-        post.likes.push(userId); // Add like
-      }
-  
-      await post.save();
-      res.json(post);
+        const post = await Content.findById(postId);
+        if (!post) return res.status(404).json({ message: 'Post not found' });
+
+        if (post.likes.includes(userId)) {
+            post.likes = post.likes.filter(id => id !== userId); // Unlike post
+        } else {
+            post.likes.push(userId); // Like post
+        }
+
+        await post.save();
+        res.json(post);
     } catch (error) {
-      res.status(500).json({ message: 'Server error' });
+        console.error('Error liking post:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-  };
+};

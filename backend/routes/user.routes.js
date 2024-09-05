@@ -1,3 +1,4 @@
+// user.routes.js
 import express from 'express';
 import { createUser, login, getUserInfo, getAllUsers, getUserById } from '../controllers/user.controller.js';
 import { upload } from '../middleware/upload.js';

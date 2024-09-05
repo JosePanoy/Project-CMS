@@ -8,18 +8,30 @@ const Feed = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedContent, setSelectedContent] = useState(null);
-    const [likedPosts, setLikedPosts] = useState({});
+    const [likedPosts, setLikedPosts] = useState([]);
     const userId = localStorage.getItem('userId');
 
+    // Fetch contents and liked posts
     const fetchContents = async () => {
         try {
-            const contentsResponse = await axios.get('http://localhost:8000/api/content/newsfeed', {
+            const response = await axios.get('http://localhost:8000/api/content/newsfeed', {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            const fetchedContents = contentsResponse.data;
+
+            const fetchedContents = response.data;
             setContents(fetchedContents);
+
+            // Initialize likedPosts state
+            const userLikes = fetchedContents.reduce((likes, content) => {
+                if (content.isLiked) {
+                    likes.push(content._id);
+                }
+                return likes;
+            }, []);
+
+            setLikedPosts(userLikes);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -28,14 +40,17 @@ const Feed = () => {
         }
     };
 
+    // Fetch contents on component mount
     useEffect(() => {
         fetchContents();
     }, []);
 
+    // Handle like/unlike functionality
     const handleLikeClick = async (contentId) => {
         try {
-            const isLiked = likedPosts[contentId];
-            const response = await axios.post(
+            const isLiked = likedPosts.includes(contentId);
+
+            await axios.post(
                 'http://localhost:8000/api/content/like',
                 { postId: contentId },
                 {
@@ -45,22 +60,17 @@ const Feed = () => {
                 }
             );
 
-            setContents(contents.map(content => 
-                content._id === contentId ? { ...content, ...response.data } : content
-            ));
-
-            setLikedPosts(prev => ({
-                ...prev,
-                [contentId]: !isLiked
-            }));
+            // Update the likedPosts state based on the current like status
+            setLikedPosts(prevLikedPosts => {
+                if (isLiked) {
+                    return prevLikedPosts.filter(id => id !== contentId);
+                } else {
+                    return [...prevLikedPosts, contentId];
+                }
+            });
         } catch (error) {
             console.error('Error liking post:', error);
         }
-    };
-
-    // Function to be called by DashboardSidebar after upload
-    const refreshContents = () => {
-        fetchContents();
     };
 
     if (loading) return <div className="feed-loading">Loading...</div>;
@@ -80,7 +90,7 @@ const Feed = () => {
                     const profilePic = user.profilePic || 'default-profile-pic.jpg';
                     const userName = user.name || 'Unknown User';
 
-                    const isLiked = likedPosts[content._id];
+                    const isLiked = likedPosts.includes(content._id);
 
                     return (
                         <div key={content._id} className="feed-item-container">
@@ -111,9 +121,10 @@ const Feed = () => {
                                     />
                                 )}
                                 <div className="feed-item-icons">
-                                    <FaHeart 
-                                        className={`feed-item-icon feed-item-heart-icon ${isLiked ? 'liked' : ''}`} 
-                                        onClick={() => handleLikeClick(content._id)} 
+                                    <FaHeart
+                                        className={`feed-item-icon feed-item-heart-icon ${isLiked ? 'liked' : ''}`}
+                                        onClick={() => handleLikeClick(content._id)}
+                                        style={{ color: isLiked ? 'red' : 'black', cursor: 'pointer' }}
                                     />
                                     <FaComment
                                         className="feed-item-icon feed-item-comment-icon"
@@ -142,8 +153,8 @@ const Feed = () => {
                                     <img
                                         src={
                                             selectedContent.userDetails.profilePic
-                                            ? `http://localhost:8000/profilepic/${selectedContent.userDetails.profilePic}`
-                                            : 'http://localhost:8000/profilepic/default-profile-pic.jpg'
+                                                ? `http://localhost:8000/profilepic/${selectedContent.userDetails.profilePic}`
+                                                : 'http://localhost:8000/profilepic/default-profile-pic.jpg'
                                         }
                                         alt="Profile"
                                         className="feed-modal-profile-pic"
@@ -156,9 +167,10 @@ const Feed = () => {
                                 <div className="feed-modal-separator"></div>
                                 <p className="feed-modal-caption">{selectedContent.caption}</p>
                                 <div className="feed-modal-icons">
-                                    <FaHeart 
-                                        className={`feed-modal-icon feed-modal-heart-icon ${likedPosts[selectedContent._id] ? 'liked' : ''}`} 
-                                        onClick={() => handleLikeClick(selectedContent._id)} 
+                                    <FaHeart
+                                        className={`feed-modal-icon feed-modal-heart-icon ${likedPosts.includes(selectedContent._id) ? 'liked' : ''}`}
+                                        onClick={() => handleLikeClick(selectedContent._id)}
+                                        style={{ color: likedPosts.includes(selectedContent._id) ? 'red' : 'black', cursor: 'pointer' }}
                                     />
                                     <FaComment className="feed-modal-icon feed-modal-comment-icon" />
                                 </div>
