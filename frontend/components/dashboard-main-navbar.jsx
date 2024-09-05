@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaHome, FaSearch, FaEnvelope, FaBell, FaUser, FaSignOutAlt, FaUpload } from 'react-icons/fa';
+import { FaHome, FaSearch, FaEnvelope, FaBell, FaUser, FaSignOutAlt, FaUpload, FaBookmark } from 'react-icons/fa';
 import { useNavigate, Link } from 'react-router-dom';
 import '../src/assets/css/dashboard-main-sidebar.css';
 import loadingAnimation from '../src/assets/img/loading.gif';
@@ -84,6 +84,10 @@ function DashboardSidebar({ user, onContentUpload }) {
         <button className="dashboard-sidebar-btn">
           <FaSearch />
           <span>Search</span>
+        </button>
+        <button className="dashboard-sidebar-btn" onClick={() => navigate('/savedpost')}>
+          <FaBookmark />
+          <span>Saved</span>
         </button>
         <button className="dashboard-sidebar-btn">
           <FaEnvelope />

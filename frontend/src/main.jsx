@@ -11,6 +11,7 @@ import Signup from '../components/signup';
 import Login from '../components/login';
 import DashbordMain from '../components/dashboard-main'; 
 import UserProfile from '../components/user-profile';
+import SavePost from '../components/save-post';
 
 const root = createRoot(document.getElementById('root'));
 root.render(
@@ -23,6 +24,7 @@ root.render(
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<DashbordMain />} /> 
         <Route path="/user-profile" element={<UserProfile />} />
+        <Route path="/savedpost" element={<SavePost />} />
       </Routes>
     </Router>
   </React.StrictMode>
