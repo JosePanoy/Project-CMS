@@ -1,3 +1,4 @@
+// content.controller.js
 import Content from '../models/content.model.js';
 
 // Upload user content
@@ -124,7 +125,7 @@ export const getComments = async (req, res) => {
     const { postId } = req.params;
 
     try {
-        const post = await Content.findById(postId).select('comments');
+        const post = await Content.findById(postId).populate('comments.author', 'name'); // Populate author field with user details
         if (!post) return res.status(404).json({ message: 'Post not found' });
 
         res.json(post.comments);

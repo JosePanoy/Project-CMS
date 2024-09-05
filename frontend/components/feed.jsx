@@ -51,7 +51,19 @@ const Feed = () => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            setComments(prevComments => ({ ...prevComments, [postId]: response.data }));
+            const comments = response.data;
+
+            // Fetch user details for each comment
+            const commentsWithUserDetails = await Promise.all(comments.map(async comment => {
+                const userResponse = await axios.get(`http://localhost:8000/api/users/${comment.author}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                return { ...comment, authorName: userResponse.data.name };
+            }));
+
+            setComments(prevComments => ({ ...prevComments, [postId]: commentsWithUserDetails }));
         } catch (error) {
             console.error('Error fetching comments:', error);
         }
@@ -217,15 +229,22 @@ const Feed = () => {
                                     {new Date(selectedContent.createdAt).toLocaleString()}
                                 </span>
                                 <div className="feed-modal-comments">
-                                    {comments[selectedContent._id] && comments[selectedContent._id].map(comment => (
-                                        <div key={comment._id} className="feed-modal-comment">
-                                            <span className="feed-modal-comment-author">{comment.author}</span>
-                                            <span className="feed-modal-comment-text">{comment.text}</span>
-                                            <span className="feed-modal-comment-timestamp">
-                                                {new Date(comment.timestamp).toLocaleString()}
-                                            </span>
-                                        </div>
-                                    ))}
+                                {comments[selectedContent._id] && comments[selectedContent._id].map(comment => (
+                                    <div key={comment._id} className="feed-modal-comment">
+                                        <span className="feed-modal-comment-author">{comment.authorName}</span>
+                                        <span className="feed-modal-comment-text">{comment.text}</span>
+                                        <span className="feed-modal-comment-timestamp">
+                                        {new Date(comment.timestamp).toLocaleString('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: true
+                                        })}
+                                    </span>
+                                    </div>
+                                ))}
                                 </div>
                                 <div className="feed-modal-add-comment">
                                     <textarea

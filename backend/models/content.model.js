@@ -13,7 +13,7 @@ const contentSchema = new mongoose.Schema({
     fileName: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     likes: [{ type: String }],
-    comments: [commentSchema]  // Add this line
+    comments: [commentSchema]  
 });
 
 const Content = mongoose.models.Content || mongoose.model('Content', contentSchema);
