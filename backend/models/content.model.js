@@ -1,22 +1,17 @@
-// models/content.model.js
+// content.model.js
 import mongoose from 'mongoose';
 
-const commentSchema = new mongoose.Schema({
-    author: { type: String, required: true },
-    text: { type: String, required: true },
-    timestamp: { type: Date, default: Date.now }
-});
-
 const contentSchema = new mongoose.Schema({
-    userId: { type: String, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     caption: { type: String, required: true },
     fileName: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now },
-    likes: [{ type: String }],
-    comments: [commentSchema],
-    bookmarkedBy: [{ type: String }]  // Field for users who bookmarked the post
-});
+    filePath: { type: String },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    bookmarkedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    comments: [{ 
+        author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
+        text: String 
+    }]
+}, { timestamps: true });
 
-const Content = mongoose.models.Content || mongoose.model('Content', contentSchema);
-
-export default Content;
+export default mongoose.model('Content', contentSchema);

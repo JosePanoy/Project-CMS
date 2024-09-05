@@ -6,7 +6,7 @@ import User from '../models/user.model.js';
 export const uploadContent = async (req, res) => {
     const { caption } = req.body;
     const fileName = req.file ? req.file.filename : null;
-    const userId = req.user.id; // Ensure user is authenticated
+    const userId = req.user.id;
 
     if (!caption || !fileName) {
         return res.status(400).json({ message: 'Caption and file are required' });
@@ -42,7 +42,7 @@ export const getUserContent = async (req, res) => {
 
 // Get newsfeed with like status
 export const getNewsfeed = async (req, res) => {
-    const userId = req.user.id; // Logged-in user ID
+    const userId = req.user.id;
 
     try {
         const contents = await Content.aggregate([
@@ -59,21 +59,24 @@ export const getNewsfeed = async (req, res) => {
             }
         ]);
 
-        // Add isLiked field to each content
-        const contentsWithLikeStatus = contents.map(content => {
-            const isLiked = content.likes.includes(userId);
+        const contentsWithStatus = contents.map(content => {
+            const isLiked = Array.isArray(content.likes) && content.likes.includes(userId);
+            const isBookmarked = Array.isArray(content.bookmarkedBy) && content.bookmarkedBy.includes(userId);
             return {
                 ...content,
-                isLiked
+                isLiked,
+                isBookmarked
             };
         });
 
-        res.json(contentsWithLikeStatus);
+        res.json(contentsWithStatus);
     } catch (error) {
         console.error('Error fetching newsfeed:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+
 
 // Handle like/unlike functionality
 export const likePost = async (req, res) => {
@@ -85,9 +88,9 @@ export const likePost = async (req, res) => {
         if (!post) return res.status(404).json({ message: 'Post not found' });
 
         if (post.likes.includes(userId)) {
-            post.likes = post.likes.filter(id => id !== userId); // Unlike post
+            post.likes = post.likes.filter(id => id !== userId);
         } else {
-            post.likes.push(userId); // Like post
+            post.likes.push(userId);
         }
 
         await post.save();
@@ -144,14 +147,11 @@ export const bookmarkPost = async (req, res) => {
         const post = await Content.findById(postId);
         if (!post) return res.status(404).json({ message: 'Post not found' });
 
-        // Check if the post is already bookmarked
         const isBookmarked = post.bookmarkedBy.includes(userId);
 
         if (isBookmarked) {
-            // Remove bookmark
             post.bookmarkedBy = post.bookmarkedBy.filter(id => id !== userId);
         } else {
-            // Add bookmark
             post.bookmarkedBy.push(userId);
         }
 
@@ -187,14 +187,14 @@ export const getSavedPosts = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        // Aggregate query to join content with user details
+
         const contents = await Content.aggregate([
             {
                 $match: { bookmarkedBy: userId }
             },
             {
                 $lookup: {
-                    from: 'users',  // The name of the collection in your MongoDB
+                    from: 'users', 
                     localField: 'userId',
                     foreignField: '_id',
                     as: 'userDetails'

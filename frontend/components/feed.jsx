@@ -22,17 +22,17 @@ const Feed = () => {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-
+    
             const fetchedContents = response.data;
             setContents(fetchedContents);
-
+    
             // Extract liked and bookmarked posts from the fetched data
             const userLikes = fetchedContents.filter(content => content.isLiked).map(content => content._id);
             setLikedPosts(userLikes);
-
+    
             const userBookmarks = fetchedContents.filter(content => content.isBookmarked).map(content => content._id);
             setBookmarkedPosts(userBookmarks);
-
+    
             setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -40,6 +40,7 @@ const Feed = () => {
             setLoading(false);
         }
     };
+    
 
     // Fetch comments for a post
     const fetchComments = async (postId) => {
@@ -97,7 +98,7 @@ const Feed = () => {
     const handleBookmarkClick = async (contentId) => {
         try {
             const isBookmarked = bookmarkedPosts.includes(contentId);
-
+    
             await axios.post(
                 isBookmarked ? 'http://localhost:8000/api/content/unbookmark' : 'http://localhost:8000/api/content/bookmark',
                 { postId: contentId },
@@ -107,7 +108,7 @@ const Feed = () => {
                     }
                 }
             );
-
+    
             setBookmarkedPosts(prevBookmarkedPosts => {
                 if (isBookmarked) {
                     return prevBookmarkedPosts.filter(id => id !== contentId);
@@ -119,6 +120,7 @@ const Feed = () => {
             console.error('Error bookmarking post:', error);
         }
     };
+    
 
     // Handle new comment
     const handleCommentSubmit = async (postId) => {
