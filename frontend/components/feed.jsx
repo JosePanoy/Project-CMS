@@ -121,6 +121,29 @@ const Feed = () => {
         fetchContents();
     }, []);
 
+
+
+    // convert time to sec,hr,date
+    const getTimeDifference = (timestamp) => {
+        const now = new Date();
+        const commentTime = new Date(timestamp);
+        const diffInSeconds = Math.floor((now - commentTime) / 1000);
+      
+        const minutes = Math.floor(diffInSeconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+      
+        if (days > 0) {
+          return days === 1 ? '1 day ago' : `${days} days ago`;
+        } else if (hours > 0) {
+          return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
+        } else if (minutes > 0) {
+          return minutes === 1 ? '1 min ago' : `${minutes} mins ago`;
+        } else {
+          return 'Just now';
+        }
+      };
+
     if (loading) return <div className="feed-loading">Loading...</div>;
     if (error) return <div className="feed-error">{error}</div>;
 
@@ -234,14 +257,9 @@ const Feed = () => {
                                         <span className="feed-modal-comment-author">{comment.authorName}</span>
                                         <span className="feed-modal-comment-text">{comment.text}</span>
                                         <span className="feed-modal-comment-timestamp">
-                                        {new Date(comment.timestamp).toLocaleString('en-US', {
-                                            month: 'short',
-                                            day: 'numeric',
-                                            year: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                            hour12: true
-                                        })}
+                                        <p className="comment-timestamp">
+                                            {getTimeDifference(comment.timestamp)}
+                                        </p>
                                     </span>
                                     </div>
                                 ))}
