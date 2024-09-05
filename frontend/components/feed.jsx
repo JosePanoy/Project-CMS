@@ -1,4 +1,3 @@
-// src/components/Feed.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaHeart, FaComment, FaBookmark } from 'react-icons/fa';
@@ -27,20 +26,11 @@ const Feed = () => {
             const fetchedContents = response.data;
             setContents(fetchedContents);
 
-            const userLikes = fetchedContents.reduce((likes, content) => {
-                if (content.isLiked) {
-                    likes.push(content._id);
-                }
-                return likes;
-            }, []);
+            // Extract liked and bookmarked posts from the fetched data
+            const userLikes = fetchedContents.filter(content => content.isLiked).map(content => content._id);
             setLikedPosts(userLikes);
 
-            const userBookmarks = fetchedContents.reduce((bookmarks, content) => {
-                if (content.isBookmarked) {
-                    bookmarks.push(content._id);
-                }
-                return bookmarks;
-            }, []);
+            const userBookmarks = fetchedContents.filter(content => content.isBookmarked).map(content => content._id);
             setBookmarkedPosts(userBookmarks);
 
             setLoading(false);
@@ -237,7 +227,7 @@ const Feed = () => {
                                         }}
                                     />
                                     <FaBookmark
-                                        className="feed-item-icon feed-item-save-icon"
+                                        className={`feed-item-icon feed-item-save-icon ${isBookmarked ? 'bookmarked' : ''}`}
                                         onClick={() => handleBookmarkClick(content._id)}
                                         style={{ color: isBookmarked ? 'yellow' : 'black', cursor: 'pointer' }}
                                     />

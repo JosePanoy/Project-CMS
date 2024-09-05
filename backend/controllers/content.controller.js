@@ -187,8 +187,25 @@ export const getSavedPosts = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        const savedPosts = await Content.find({ bookmarkedBy: userId });
-        res.status(200).json(savedPosts);
+        // Aggregate query to join content with user details
+        const contents = await Content.aggregate([
+            {
+                $match: { bookmarkedBy: userId }
+            },
+            {
+                $lookup: {
+                    from: 'users',  // The name of the collection in your MongoDB
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'userDetails'
+                }
+            },
+            {
+                $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true }
+            }
+        ]);
+
+        res.status(200).json(contents);
     } catch (error) {
         console.error('Error fetching saved posts:', error);
         res.status(500).json({ message: 'Server Error' });

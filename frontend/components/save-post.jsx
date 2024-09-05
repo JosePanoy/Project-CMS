@@ -7,9 +7,7 @@ function SavePost() {
     const [savedPosts, setSavedPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const userId = localStorage.getItem('userId'); // Make sure you have userId in localStorage
 
-    // Fetch saved posts from the backend
     const fetchSavedPosts = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/content/saved', {
@@ -17,12 +15,11 @@ function SavePost() {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            console.log(response.data); // Log the response data
             setSavedPosts(response.data);
-            setLoading(false);
         } catch (error) {
             console.error('Error fetching saved posts:', error);
             setError('Failed to fetch saved posts');
+        } finally {
             setLoading(false);
         }
     };
@@ -31,13 +28,18 @@ function SavePost() {
         fetchSavedPosts();
     }, []);
 
-    if (loading) return <div className="save-post-loading">Loading...</div>;
-    if (error) return <div className="save-post-error">{error}</div>;
+    if (loading) {
+        return <div className="save-post-loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="save-post-error">{error}</div>;
+    }
 
     return (
         <>
             <DashboardSidebar />
-            <h3 style={{ textAlign: 'center', marginTop: '50px', cursor: 'default' }}>Saved Posts</h3>
+            <h3 className="saved-posts-header">Saved Posts</h3>
             <div className="saved-posts-container">
                 {savedPosts.length === 0 ? (
                     <p className="no-saved-posts">You have no saved posts.</p>
@@ -45,7 +47,7 @@ function SavePost() {
                     savedPosts.map(post => {
                         const isVideo = post.fileName.endsWith('.mp4');
                         const userDetails = post.userDetails || {};
-                        const profilePic = userDetails.profilePic || 'default-profile-pic.jpg'; // Fallback profile picture
+                        const profilePic = userDetails.profilePic || 'default-profile-pic.jpg';
                         const userName = userDetails.name || 'Unknown User';
 
                         return (
