@@ -1,5 +1,4 @@
-// user.model.js
-
+//user.model.js
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
@@ -10,9 +9,9 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   contact: { type: String, required: true },
   password: { type: String, required: true },
-  profilePic: { type: String }
+  profilePic: { type: String },
+  bookmarkedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Content' }] // Field for bookmarked posts
 });
-
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 

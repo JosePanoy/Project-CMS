@@ -13,7 +13,8 @@ const contentSchema = new mongoose.Schema({
     fileName: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     likes: [{ type: String }],
-    comments: [commentSchema]  
+    comments: [commentSchema],
+    bookmarkedBy: [{ type: String }]  // Field for users who bookmarked the post
 });
 
 const Content = mongoose.models.Content || mongoose.model('Content', contentSchema);

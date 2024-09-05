@@ -1,4 +1,4 @@
-// Feed.js
+// src/components/Feed.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaHeart, FaComment, FaBookmark } from 'react-icons/fa';
@@ -10,11 +10,12 @@ const Feed = () => {
     const [error, setError] = useState(null);
     const [selectedContent, setSelectedContent] = useState(null);
     const [likedPosts, setLikedPosts] = useState([]);
+    const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
     const [comments, setComments] = useState({});
     const [newComment, setNewComment] = useState('');
     const userId = localStorage.getItem('userId');
 
-    // Fetch contents and liked posts
+    // Fetch contents and liked/bookmarked posts
     const fetchContents = async () => {
         try {
             const response = await axios.get('http://localhost:8000/api/content/newsfeed', {
@@ -26,15 +27,22 @@ const Feed = () => {
             const fetchedContents = response.data;
             setContents(fetchedContents);
 
-            // Initialize likedPosts state
             const userLikes = fetchedContents.reduce((likes, content) => {
                 if (content.isLiked) {
                     likes.push(content._id);
                 }
                 return likes;
             }, []);
-
             setLikedPosts(userLikes);
+
+            const userBookmarks = fetchedContents.reduce((bookmarks, content) => {
+                if (content.isBookmarked) {
+                    bookmarks.push(content._id);
+                }
+                return bookmarks;
+            }, []);
+            setBookmarkedPosts(userBookmarks);
+
             setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -53,7 +61,6 @@ const Feed = () => {
             });
             const comments = response.data;
 
-            // Fetch user details for each comment
             const commentsWithUserDetails = await Promise.all(comments.map(async comment => {
                 const userResponse = await axios.get(`http://localhost:8000/api/users/${comment.author}`, {
                     headers: {
@@ -84,7 +91,6 @@ const Feed = () => {
                 }
             );
 
-            // Update the likedPosts state based on the current like status
             setLikedPosts(prevLikedPosts => {
                 if (isLiked) {
                     return prevLikedPosts.filter(id => id !== contentId);
@@ -94,6 +100,33 @@ const Feed = () => {
             });
         } catch (error) {
             console.error('Error liking post:', error);
+        }
+    };
+
+    // Handle bookmark/unbookmark functionality
+    const handleBookmarkClick = async (contentId) => {
+        try {
+            const isBookmarked = bookmarkedPosts.includes(contentId);
+
+            await axios.post(
+                isBookmarked ? 'http://localhost:8000/api/content/unbookmark' : 'http://localhost:8000/api/content/bookmark',
+                { postId: contentId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            );
+
+            setBookmarkedPosts(prevBookmarkedPosts => {
+                if (isBookmarked) {
+                    return prevBookmarkedPosts.filter(id => id !== contentId);
+                } else {
+                    return [...prevBookmarkedPosts, contentId];
+                }
+            });
+        } catch (error) {
+            console.error('Error bookmarking post:', error);
         }
     };
 
@@ -121,28 +154,26 @@ const Feed = () => {
         fetchContents();
     }, []);
 
-
-
-    // convert time to sec,hr,date
+    // Convert time to seconds, hours, or days
     const getTimeDifference = (timestamp) => {
         const now = new Date();
         const commentTime = new Date(timestamp);
         const diffInSeconds = Math.floor((now - commentTime) / 1000);
-      
+
         const minutes = Math.floor(diffInSeconds / 60);
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
-      
+
         if (days > 0) {
-          return days === 1 ? '1 day ago' : `${days} days ago`;
+            return days === 1 ? '1 day ago' : `${days} days ago`;
         } else if (hours > 0) {
-          return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
+            return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
         } else if (minutes > 0) {
-          return minutes === 1 ? '1 min ago' : `${minutes} mins ago`;
+            return minutes === 1 ? '1 min ago' : `${minutes} mins ago`;
         } else {
-          return 'Just now';
+            return 'Just now';
         }
-      };
+    };
 
     if (loading) return <div className="feed-loading">Loading...</div>;
     if (error) return <div className="feed-error">{error}</div>;
@@ -162,6 +193,7 @@ const Feed = () => {
                     const userName = user.name || 'Unknown User';
 
                     const isLiked = likedPosts.includes(content._id);
+                    const isBookmarked = bookmarkedPosts.includes(content._id);
 
                     return (
                         <div key={content._id} className="feed-item-container">
@@ -204,7 +236,11 @@ const Feed = () => {
                                             fetchComments(content._id);
                                         }}
                                     />
-                                    <FaBookmark className="feed-item-icon feed-item-save-icon" />
+                                    <FaBookmark
+                                        className="feed-item-icon feed-item-save-icon"
+                                        onClick={() => handleBookmarkClick(content._id)}
+                                        style={{ color: isBookmarked ? 'yellow' : 'black', cursor: 'pointer' }}
+                                    />
                                 </div>
                             </div>
                             <div className="feed-item-divider"></div>
@@ -225,11 +261,7 @@ const Feed = () => {
                             <div className="feed-modal-right">
                                 <div className="feed-modal-header">
                                     <img
-                                        src={
-                                            selectedContent.userDetails.profilePic
-                                                ? `http://localhost:8000/profilepic/${selectedContent.userDetails.profilePic}`
-                                                : 'http://localhost:8000/profilepic/default-profile-pic.jpg'
-                                        }
+                                        src={`http://localhost:8000/profilepic/${selectedContent.userDetails.profilePic}`}
                                         alt="Profile"
                                         className="feed-modal-profile-pic"
                                     />
@@ -238,41 +270,28 @@ const Feed = () => {
                                         <span className="feed-modal-user-nickname">@{selectedContent.userDetails.nickName}</span>
                                     </div>
                                 </div>
-                                <div className="feed-modal-separator"></div>
                                 <p className="feed-modal-caption">{selectedContent.caption}</p>
                                 <div className="feed-modal-icons">
-                                    <FaHeart
-                                        className={`feed-modal-icon feed-modal-heart-icon ${likedPosts.includes(selectedContent._id) ? 'liked' : ''}`}
-                                        onClick={() => handleLikeClick(selectedContent._id)}
-                                        style={{ color: likedPosts.includes(selectedContent._id) ? 'red' : 'black', cursor: 'pointer' }}
-                                    />
-                                    <FaComment className="feed-modal-icon feed-modal-comment-icon" />
+                                    <FaHeart className={`feed-modal-icon ${likedPosts.includes(selectedContent._id) ? 'liked' : ''}`} style={{ color: likedPosts.includes(selectedContent._id) ? 'red' : 'black' }} />
+                                    <FaComment className="feed-modal-icon" />
+                                    <FaBookmark className={`feed-modal-icon ${bookmarkedPosts.includes(selectedContent._id) ? 'bookmarked' : ''}`} style={{ color: bookmarkedPosts.includes(selectedContent._id) ? 'yellow' : 'black' }} />
                                 </div>
-                                <span className="feed-modal-upload-time">
-                                    {new Date(selectedContent.createdAt).toLocaleString()}
-                                </span>
                                 <div className="feed-modal-comments">
-                                {comments[selectedContent._id] && comments[selectedContent._id].map(comment => (
-                                    <div key={comment._id} className="feed-modal-comment">
-                                        <span className="feed-modal-comment-author">{comment.authorName}</span>
-                                        <span className="feed-modal-comment-text">{comment.text}</span>
-                                        <span className="feed-modal-comment-timestamp">
-                                        <p className="comment-timestamp">
-                                            {getTimeDifference(comment.timestamp)}
-                                        </p>
-                                    </span>
-                                    </div>
-                                ))}
+                                    {comments[selectedContent._id] && comments[selectedContent._id].map(comment => (
+                                        <div key={comment._id} className="feed-modal-comment">
+                                            <span className="feed-modal-comment-author">{comment.authorName}</span>: {comment.text}
+                                            <span className="feed-modal-comment-time">{getTimeDifference(comment.createdAt)}</span>
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="feed-modal-add-comment">
-                                    <textarea
+                                <div className="feed-modal-comment-input">
+                                    <input
+                                        type="text"
                                         value={newComment}
                                         onChange={(e) => setNewComment(e.target.value)}
                                         placeholder="Add a comment..."
-                                    ></textarea>
-                                    <button onClick={() => handleCommentSubmit(selectedContent._id)}>
-                                        Post
-                                    </button>
+                                    />
+                                    <button onClick={() => handleCommentSubmit(selectedContent._id)}>Post</button>
                                 </div>
                             </div>
                         </div>
