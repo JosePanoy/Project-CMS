@@ -1,3 +1,4 @@
+// content.controller.js
 import Content from '../models/content.model.js';
 import User from '../models/user.model.js';
 
@@ -59,9 +60,11 @@ export const getNewsfeed = async (req, res) => {
         ]);
 
         const contentsWithStatus = contents.map(content => {
+            const isLiked = Array.isArray(content.likes) && content.likes.includes(userId);
             const isBookmarked = Array.isArray(content.bookmarkedBy) && content.bookmarkedBy.includes(userId);
             return {
                 ...content,
+                isLiked,
                 isBookmarked
             };
         });
@@ -72,6 +75,8 @@ export const getNewsfeed = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+
 
 // Handle like/unlike functionality
 export const likePost = async (req, res) => {
@@ -142,13 +147,16 @@ export const bookmarkPost = async (req, res) => {
         const post = await Content.findById(postId);
         if (!post) return res.status(404).json({ message: 'Post not found' });
 
-        if (post.bookmarkedBy.includes(userId)) {
-            return res.status(400).json({ message: 'Post already bookmarked' });
+        const isBookmarked = post.bookmarkedBy.includes(userId);
+
+        if (isBookmarked) {
+            post.bookmarkedBy = post.bookmarkedBy.filter(id => id !== userId);
+        } else {
+            post.bookmarkedBy.push(userId);
         }
 
-        post.bookmarkedBy.push(userId);
         await post.save();
-        res.json({ message: 'Post bookmarked successfully', post });
+        res.json(post);
     } catch (error) {
         console.error('Error bookmarking post:', error);
         res.status(500).json({ message: 'Server error' });
@@ -164,14 +172,10 @@ export const unbookmarkPost = async (req, res) => {
         const post = await Content.findById(postId);
         if (!post) return res.status(404).json({ message: 'Post not found' });
 
-        if (!post.bookmarkedBy.includes(userId)) {
-            return res.status(400).json({ message: 'Post not bookmarked' });
-        }
-
         post.bookmarkedBy = post.bookmarkedBy.filter(id => id !== userId);
         await post.save();
 
-        res.status(200).json({ message: 'Post unbookmarked successfully', post });
+        res.json({ message: 'Post unbookmarked successfully' });
     } catch (error) {
         console.error('Error unbookmarking post:', error);
         res.status(500).json({ message: 'Server error' });
@@ -183,6 +187,7 @@ export const getSavedPosts = async (req, res) => {
     const userId = req.user.id;
 
     try {
+
         const contents = await Content.aggregate([
             {
                 $match: { bookmarkedBy: userId }
