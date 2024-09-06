@@ -1,4 +1,3 @@
-// content.routes.js
 import express from 'express';
 import path from 'path';
 import { upload } from '../middleware/userscontent.upload.js';
@@ -35,10 +34,10 @@ router.post('/upload', authenticate, upload.single('file'), async (req, res) => 
 
 router.get('/newsfeed', authenticate, getNewsfeed);
 router.post('/like', authenticate, likePost);
-router.post('/comment', authenticate, addComment);  // Add this line
-router.get('/comments/:postId', authenticate, getComments);  // Add this line
-router.post('/bookmark', authenticate, bookmarkPost);  // Bookmark a post
-router.post('/unbookmark', authenticate, unbookmarkPost);  // Unbookmark a post
-router.get('/saved', authenticate, getSavedPosts);  // Apply authenticate middleware
+router.post('/comment', authenticate, addComment);
+router.get('/comments/:postId', authenticate, getComments);
+router.post('/bookmark', authenticate, bookmarkPost);
+router.post('/unbookmark', authenticate, unbookmarkPost);
+router.get('/saved', authenticate, getSavedPosts);
 
 export default router;

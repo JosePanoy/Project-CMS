@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   contact: { type: String, required: true },
   password: { type: String, required: true },
   profilePic: { type: String },
-  bookmarkedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Content' }] // Field for bookmarked posts
+  bookmarkedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Content' }] 
 });
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
