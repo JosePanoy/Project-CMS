@@ -1,7 +1,5 @@
 import Content from '../models/content.model.js';
-import User from '../models/user.model.js';
 
-// Upload user content
 export const uploadContent = async (req, res) => {
     const { caption } = req.body;
     const fileName = req.file ? req.file.filename : null;
@@ -26,7 +24,6 @@ export const uploadContent = async (req, res) => {
     }
 };
 
-// Get user-specific content
 export const getUserContent = async (req, res) => {
     const userId = req.user.id;
 
@@ -39,7 +36,6 @@ export const getUserContent = async (req, res) => {
     }
 };
 
-// Get newsfeed
 export const getNewsfeed = async (req, res) => {
     const userId = req.user.id;
 
@@ -71,6 +67,46 @@ export const getNewsfeed = async (req, res) => {
         res.json(contentsWithStatus);
     } catch (error) {
         console.error('Error fetching newsfeed:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+// handle like post 
+export const likePost = async (req, res) => {
+    const userId = req.user._id; // Extract userId as a string
+    const { postId } = req.params;
+
+    if (!userId) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    try {
+        const post = await Content.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Clean up any null values in likes
+        post.likes = post.likes.filter(id => id); // Remove null or undefined IDs
+
+        const hasLiked = post.likes.includes(userId);
+
+        if (hasLiked) {
+            // Unlike: remove userId from likes
+            post.likes = post.likes.filter(id => id !== userId);
+        } else {
+            // Like: add userId to likes
+            post.likes.push(userId);
+        }
+
+        await post.save();
+
+        // Send back the updated number of likes
+        res.status(200).json({ message: 'Post liked/unliked successfully', likes: post.likes.length });
+    } catch (error) {
+        console.error('Error liking post:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };

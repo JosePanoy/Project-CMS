@@ -2,16 +2,17 @@
 import mongoose from 'mongoose';
 
 const contentSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: { type: String, required: true },
     caption: { type: String, required: true },
     fileName: { type: String, required: true },
-    filePath: { type: String },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    bookmarkedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    comments: [{ 
-        author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
-        text: String 
-    }]
-}, { timestamps: true });
+    createdAt: { type: Date, default: Date.now },
+    likes: [{ type: String }], // Ensure this matches userId type
+    comments: [{
+        author: { type: String },
+        text: { type: String },
+        timestamp: { type: Date, default: Date.now }
+    }],
+    bookmarkedBy: [{ type: String }] // Ensure this matches userId type
+});
 
 export default mongoose.model('Content', contentSchema);
