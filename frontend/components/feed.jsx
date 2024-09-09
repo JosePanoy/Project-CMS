@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaHeart } from 'react-icons/fa';
+import { FaHeart, FaComment } from 'react-icons/fa';
 import '../src/assets/css/feed.css';
 
 const Feed = () => {
@@ -8,6 +8,7 @@ const Feed = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [likedPosts, setLikedPosts] = useState(new Set());
+    const [selectedPost, setSelectedPost] = useState(null);
 
     const fetchContents = async () => {
         try {
@@ -15,10 +16,12 @@ const Feed = () => {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
     
-            setContents(response.data);
+            // Sort posts by creation date in descending order
+            const sortedContents = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     
-            // Initialize likedPosts from the fetched data
-            const liked = new Set(response.data.filter(post => post.isLiked).map(post => post._id));
+            setContents(sortedContents);
+    
+            const liked = new Set(sortedContents.filter(post => post.isLiked).map(post => post._id));
             setLikedPosts(liked);
     
             setLoading(false);
@@ -28,6 +31,7 @@ const Feed = () => {
             setLoading(false);
         }
     };
+    
     
 
     useEffect(() => {
@@ -65,8 +69,14 @@ const Feed = () => {
             console.error('Error liking post:', error.response?.data || error.message);
         }
     };
+
+    const handleCommentClick = (post) => {
+        setSelectedPost(post);
+    };
     
-    
+    const handleCloseModal = () => {
+        setSelectedPost(null);
+    };
 
     if (loading) return <div className="feed-loading">Loading...</div>;
     if (error) return <div className="feed-error">{error}</div>;
@@ -79,7 +89,14 @@ const Feed = () => {
                 contents.map(content => {
                     const isVideo = content.fileName.endsWith('.mp4');
                     const date = new Date(content.createdAt);
-                    const formattedDate = `${date.toLocaleString('en-US', { month: 'short' })} ${date.getDate()}, ${date.getFullYear()} ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}`;
+                    const formattedDate = date.toLocaleString('en-US', {
+                        month: '2-digit',
+                        day: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                    });
 
                     const user = content.userDetails || {};
                     const profilePic = user.profilePic || 'default-profile-pic.jpg';
@@ -115,15 +132,78 @@ const Feed = () => {
                                 )}
                             </div>
                             <div className="feed-item-actions">
-                            <FaHeart
+                                <FaHeart
                                     onClick={() => handleLike(content._id)}
                                     style={{ color: likedPosts.has(content._id) ? 'red' : 'black', cursor: 'pointer' }}
+                                />
+                                <FaComment
+                                    onClick={() => handleCommentClick(content)}
+                                    className="feed-item-comment-icon"
                                 />
                             </div>
                             <div className="feed-item-divider"></div>
                         </div>
                     );
                 })
+            )}
+
+            {selectedPost && (
+                <div className="feed-modal">
+                    <div className="feed-modal-content">
+                        <div className="feed-modal-body">
+                            <div className="feed-modal-image">
+                                {selectedPost.fileName.endsWith('.mp4') ? (
+                                    <video
+                                        src={`http://localhost:8000/usersUpload/${selectedPost.fileName}`}
+                                        controls
+                                        className="feed-modal-image"
+                                    />
+                                ) : (
+                                    <img
+                                        src={`http://localhost:8000/usersUpload/${selectedPost.fileName}`}
+                                        alt={selectedPost.caption}
+                                        className="feed-modal-image"
+                                    />
+                                )}
+                            </div>
+                            <div className="feed-modal-right">
+                                <div className="feed-modal-header">
+                                    <img
+                                        src={`http://localhost:8000/profilepic/${selectedPost.userDetails?.profilePic || 'default-profile-pic.jpg'}`}
+                                        alt="Profile"
+                                        className="feed-modal-profile-pic"
+                                    />
+                                    <div className="feed-modal-user-info">
+                                        <span className="feed-modal-user-name">{selectedPost.userDetails?.name || 'Unknown User'}</span>
+                                        <span className="feed-modal-user-nickname">@{selectedPost.userDetails?.nickName || 'unknown_nickname'}</span>
+                                        <span className="feed-modal-upload-time">
+                                            {new Date(selectedPost.createdAt).toLocaleString('en-US', {
+                                                month: 'long',
+                                                day: 'numeric',
+                                                year: 'numeric',
+                                                hour: 'numeric',
+                                                minute: 'numeric',
+                                                hour12: true
+                                            })}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="feed-modal-separator"></div>
+                                <p className="feed-modal-caption">{selectedPost.caption}</p>
+                                <div className="feed-modal-comments-section">
+                                    <div className="feed-modal-comments">
+                                        {/* Placeholder for comments */}
+                                    </div>
+                                    <div className="feed-modal-add-comment">
+                                        <textarea className="feed-modal-comment-input" placeholder="Add a comment..."></textarea>
+                                        <button>Post</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="feed-modal-close" onClick={handleCloseModal}>×</div>
+                    </div>
+                </div>
             )}
         </div>
     );
