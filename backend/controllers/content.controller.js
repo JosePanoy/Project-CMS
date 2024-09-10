@@ -1,3 +1,4 @@
+// content.controller.js
 import Content from '../models/content.model.js';
 import User from '../models/user.model.js';
 
@@ -73,7 +74,7 @@ export const getNewsfeed = async (req, res) => {
 };
 
 export const likePost = async (req, res) => {
-    const userId = req.user._id; // Extract userId as a string
+    const userId = req.user._id; 
     const { postId } = req.params;
 
     if (!userId) {
@@ -87,7 +88,7 @@ export const likePost = async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        post.likes = post.likes.filter(id => id); // Clean up null values
+        post.likes = post.likes.filter(id => id); 
 
         const hasLiked = post.likes.includes(userId);
 
@@ -106,6 +107,8 @@ export const likePost = async (req, res) => {
     }
 };
 
+
+// can post comment
 export const postComment = async (req, res) => {
     const { postId } = req.params;
     const { text } = req.body;
@@ -138,33 +141,22 @@ export const postComment = async (req, res) => {
 };
 
 
-
+//display comments
 export const getComments = async (req, res) => {
     const { postId } = req.params;
 
     try {
-        const post = await Content.findById(postId);
+        // Fetch post with comments and populate author details
+        const post = await Content.findById(postId).populate({
+            path: 'comments.author',
+            select: 'name profilePic'
+        });
 
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        const userIds = post.comments.map(comment => comment.author);
-
-        // Fetch user details
-        const users = await User.find({ _id: { $in: userIds } }).select('name profilePic');
-        const userMap = users.reduce((map, user) => {
-            map[user._id] = user;
-            return map;
-        }, {});
-
-        // Map comments to include user details
-        const commentsWithUserDetails = post.comments.map(comment => ({
-            ...comment,
-            author: userMap[comment.author] || { name: 'Unknown User', profilePic: 'default-profile-pic.jpg' }
-        }));
-
-        res.json(commentsWithUserDetails);
+        res.json(post.comments);
     } catch (error) {
         console.error('Error fetching comments:', error);
         res.status(500).json({ message: 'Server error' });

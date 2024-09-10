@@ -8,7 +8,7 @@ const contentSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     likes: [{ type: String }],
     comments: [{
-        author: { type: String },
+        author: { type: String, ref: 'User' },
         text: { type: String },
         timestamp: { type: Date, default: Date.now }
     }],

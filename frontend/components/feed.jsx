@@ -209,7 +209,7 @@ const Feed = () => {
                                 <div className="feed-modal-separator"></div>
                                 <p className="feed-modal-caption">{selectedPost.caption}</p>
                                 <div className="feed-modal-comments-section">
-                                <div className="feed-modal-comments">
+                                    <div className="feed-modal-comments">
                                     {comments[selectedPost._id]?.map((comment, index) => (
                                         <div key={index} className="feed-modal-comment">
                                             <img
@@ -221,7 +221,7 @@ const Feed = () => {
                                             <span style={{ color: 'black' }}>{comment.text}</span>
                                         </div>
                                     ))}
-                                </div>
+                                    </div>
                                     <div className="feed-modal-add-comment">
                                         <textarea
                                             className="feed-modal-comment-input"
