@@ -3,17 +3,16 @@ import axios from 'axios';
 import { FaHeart, FaComment } from 'react-icons/fa';
 import '../src/assets/css/feed.css';
 
-// Function to format the date into a "time ago" format
 const timeAgo = (date) => {
     const now = new Date();
     const seconds = Math.floor((now - new Date(date)) / 1000);
-    const interval = Math.floor(seconds / 31536000); // Seconds in a year
+    const interval = Math.floor(seconds / 31536000);
 
     if (interval > 1) return `${interval} years ago`;
     if (Math.floor(seconds / 2592000) > 1) return `${Math.floor(seconds / 2592000)} months ago`;
     if (Math.floor(seconds / 86400) > 1) return `${Math.floor(seconds / 86400)} days ago`;
     if (Math.floor(seconds / 3600) > 1) return `${Math.floor(seconds / 3600)} hours ago`;
-    if (Math.floor(seconds / 60) > 1) return `${Math.floor(seconds / 60)} minutes ago`;
+    if (Math.floor(seconds / 60) > 1) return `${Math.floor(seconds / 60)} mins ago`;
     return `${Math.floor(seconds)} seconds ago`;
 };
 
@@ -202,36 +201,36 @@ const Feed = () => {
                                 <div className="feed-modal-separator"></div>
                                 <p className="feed-modal-caption">{selectedPost.caption}</p>
                                 <div className="feed-modal-comments-section">
-
-                    <div className="feed-modal-comments">
-                        {comments[selectedPost._id]?.map((comment, index) => (
-                            <div key={index} className="feed-modal-comment">
-                                <img
-                                    src={`http://localhost:8000/profilepic/${comment.author.profilePic || 'default-profile-pic.jpg'}`}
-                                    alt="Profile"
-                                    className="feed-modal-comment-profile-pic"
-                                />
-                                <div className="feed-modal-comment-content">
-                                    <div className="feed-modal-comment-header">
-                                        <strong>{comment.author.name || 'Unknown User'}</strong> <br />
-                                        <span style={{color:'gray', fontSize: '0.5rem'}} className="feed-modal-comment-timestamp">{timeAgo(comment.createdAt)}</span>
+                                    <div className="feed-modal-comments">
+                                        {comments[selectedPost._id]?.map((comment, index) => (
+                                            <div key={index} className="feed-modal-comment">
+                                                <img
+                                                    src={`http://localhost:8000/profilepic/${comment.author.profilePic || 'default-profile-pic.jpg'}`}
+                                                    alt="Profile"
+                                                    className="feed-modal-comment-profile-pic"
+                                                />
+                                                <div className="feed-modal-comment-content">
+                                                    <div className="feed-modal-comment-header">
+                                                        <strong>{comment.author.name || 'Unknown User'}</strong>
+                                                        <br />
+                                                        <span style={{ color: 'gray', fontSize: '0.5rem' }} className="feed-modal-comment-timestamp">
+                                                            {timeAgo(comment.timestamp)}
+                                                        </span>
+                                                    </div>
+                                                    <p>{comment.text}</p>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
-                                    <p>{comment.text}</p>
-                                </div>
-                            </div>
-                            ))}
-                        </div>
-
-                        <div className="feed-modal-add-comment">
-                        <textarea
-                            className="feed-modal-comment-input"
-                            placeholder="Add a comment..."
-                            value={newComment}
-                            onChange={(e) => setNewComment(e.target.value)}
-                        ></textarea>
-                        <button onClick={handleCommentSubmit}>Post</button>
-                    </div>
-
+                                    <div className="feed-modal-add-comment">
+                                        <textarea
+                                            className="feed-modal-comment-input"
+                                            placeholder="Add a comment..."
+                                            value={newComment}
+                                            onChange={(e) => setNewComment(e.target.value)}
+                                        ></textarea>
+                                        <button onClick={handleCommentSubmit}>Post</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
