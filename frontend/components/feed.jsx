@@ -9,6 +9,8 @@ const Feed = () => {
     const [error, setError] = useState(null);
     const [likedPosts, setLikedPosts] = useState(new Set());
     const [selectedPost, setSelectedPost] = useState(null);
+    const [comments, setComments] = useState({});
+    const [newComment, setNewComment] = useState('');
 
     const fetchContents = async () => {
         try {
@@ -16,7 +18,6 @@ const Feed = () => {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
     
-            // Sort posts by creation date in descending order
             const sortedContents = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     
             setContents(sortedContents);
@@ -31,8 +32,6 @@ const Feed = () => {
             setLoading(false);
         }
     };
-    
-    
 
     useEffect(() => {
         fetchContents();
@@ -70,12 +69,39 @@ const Feed = () => {
         }
     };
 
-    const handleCommentClick = (post) => {
-        setSelectedPost(post);
+    const fetchComments = async (postId) => {
+        try {
+            const response = await axios.get(`http://localhost:8000/api/content/comments/${postId}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+            setComments(prev => ({ ...prev, [postId]: response.data }));
+        } catch (error) {
+            console.error('Error fetching comments:', error.response?.data || error.message);
+        }
     };
-    
+
+    const handleCommentClick = async (post) => {
+        setSelectedPost(post);
+        await fetchComments(post._id);
+    };
+
     const handleCloseModal = () => {
         setSelectedPost(null);
+    };
+
+    const handleCommentSubmit = async (postId) => {
+        if (!newComment.trim()) return;
+        
+        try {
+            await axios.post(`http://localhost:8000/api/content/comment/${postId}`, { text: newComment }, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+            
+            setNewComment('');
+            await fetchComments(postId); // Refresh comments after adding a new one
+        } catch (error) {
+            console.error('Error posting comment:', error.response?.data || error.message);
+        }
     };
 
     if (loading) return <div className="feed-loading">Loading...</div>;
@@ -139,6 +165,7 @@ const Feed = () => {
                                 <FaComment
                                     onClick={() => handleCommentClick(content)}
                                     className="feed-item-comment-icon"
+                                    style={{cursor: 'pointer'}}
                                 />
                             </div>
                             <div className="feed-item-divider"></div>
@@ -192,11 +219,25 @@ const Feed = () => {
                                 <p className="feed-modal-caption">{selectedPost.caption}</p>
                                 <div className="feed-modal-comments-section">
                                     <div className="feed-modal-comments">
-                                        {/* Placeholder for comments */}
+                                        {comments[selectedPost._id]?.map((comment, index) => (
+                                            <div key={index} className="feed-modal-comment">
+                                                <strong>{comment.author}</strong>: {comment.text}
+                                            </div>
+                                        ))}
                                     </div>
                                     <div className="feed-modal-add-comment">
-                                        <textarea className="feed-modal-comment-input" placeholder="Add a comment..."></textarea>
-                                        <button>Post</button>
+                                        <textarea
+                                            value={newComment}
+                                            onChange={(e) => setNewComment(e.target.value)}
+                                            className="feed-modal-comment-input"
+                                            placeholder="Add a comment..."
+                                        ></textarea>
+                                        <button
+                                            onClick={() => handleCommentSubmit(selectedPost._id)}
+                                            disabled={!newComment.trim()}
+                                        >
+                                            Post
+                                        </button>
                                     </div>
                                 </div>
                             </div>

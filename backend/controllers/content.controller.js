@@ -110,3 +110,52 @@ export const likePost = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// post comment
+export const postComment = async (req, res) => {
+    const { postId } = req.params;
+    const { text } = req.body;
+    const userId = req.user.id;
+
+    if (!text) {
+        return res.status(400).json({ message: 'Comment text is required' });
+    }
+
+    try {
+        const post = await Content.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        post.comments.push({
+            author: userId,
+            text
+        });
+
+        await post.save();
+        res.status(201).json({ message: 'Comment added successfully', comments: post.comments });
+    } catch (error) {
+        console.error('Error posting comment:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+// display comments
+export const getComments = async (req, res) => {
+    const { postId } = req.params;
+
+    try {
+        const post = await Content.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        res.json(post.comments);
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

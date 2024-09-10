@@ -6,13 +6,13 @@ const contentSchema = new mongoose.Schema({
     caption: { type: String, required: true },
     fileName: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
-    likes: [{ type: String }], // Ensure this matches userId type
+    likes: [{ type: String }],
     comments: [{
         author: { type: String },
         text: { type: String },
         timestamp: { type: Date, default: Date.now }
     }],
-    bookmarkedBy: [{ type: String }] // Ensure this matches userId type
+    bookmarkedBy: [{ type: String }]
 });
 
 export default mongoose.model('Content', contentSchema);

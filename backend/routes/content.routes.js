@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import Content from '../models/content.model.js';
 import { upload } from '../middleware/userscontent.upload.js';
-import { uploadContent, getNewsfeed, likePost } from '../controllers/content.controller.js';
+import { uploadContent, getNewsfeed, likePost, postComment, getComments } from '../controllers/content.controller.js';
 import { authenticate } from '../middleware/authenticate.js';
 
 const router = express.Router();
@@ -33,5 +33,6 @@ router.post('/upload', authenticate, upload.single('file'), async (req, res) => 
 
 router.get('/newsfeed', authenticate, getNewsfeed);
 router.post('/like/:postId', authenticate, likePost);
-
+router.post('/comment/:postId', authenticate, postComment);
+router.get('/comments/:postId', authenticate, getComments);
 export default router;
