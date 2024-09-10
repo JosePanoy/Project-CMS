@@ -6,15 +6,26 @@ import '../src/assets/css/feed.css';
 const timeAgo = (date) => {
     const now = new Date();
     const seconds = Math.floor((now - new Date(date)) / 1000);
-    const interval = Math.floor(seconds / 31536000);
-
+    
+    const interval = Math.floor(seconds / 31536000); 
     if (interval > 1) return `${interval} years ago`;
-    if (Math.floor(seconds / 2592000) > 1) return `${Math.floor(seconds / 2592000)} months ago`;
-    if (Math.floor(seconds / 86400) > 1) return `${Math.floor(seconds / 86400)} days ago`;
-    if (Math.floor(seconds / 3600) > 1) return `${Math.floor(seconds / 3600)} hours ago`;
-    if (Math.floor(seconds / 60) > 1) return `${Math.floor(seconds / 60)} mins ago`;
+    
+    const monthInterval = Math.floor(seconds / 2592000);
+    if (monthInterval > 1) return `${monthInterval} months ago`;
+    
+    const dayInterval = Math.floor(seconds / 86400); 
+    if (dayInterval > 1) return `${dayInterval} days ago`;
+    
+    const hourInterval = Math.floor(seconds / 3600); 
+    if (hourInterval > 1) return `${hourInterval} hours ago`;
+    if (hourInterval >= 1) return '1 hour ago'; 
+    
+    const minuteInterval = Math.floor(seconds / 60); 
+    if (minuteInterval > 1) return `${minuteInterval} mins ago`;
+    
     return `${Math.floor(seconds)} seconds ago`;
 };
+
 
 const Feed = () => {
     const [contents, setContents] = useState([]);
@@ -164,80 +175,83 @@ const Feed = () => {
                 })
             )}
 
-            {selectedPost && (
-                <div className="feed-modal">
-                    <div className="feed-modal-content">
-                        <div className="feed-modal-body">
-                            <div className="feed-modal-image">
-                                {selectedPost.fileName.endsWith('.mp4') ? (
-                                    <video
-                                        src={`http://localhost:8000/usersUpload/${selectedPost.fileName}`}
-                                        controls
-                                        className="feed-modal-image"
-                                    />
-                                ) : (
-                                    <img
-                                        src={`http://localhost:8000/usersUpload/${selectedPost.fileName}`}
-                                        alt={selectedPost.caption}
-                                        className="feed-modal-image"
-                                    />
-                                )}
+{selectedPost && (
+    <div className="feed-modal">
+        <div className="feed-modal-content">
+            <div className="feed-modal-body">
+                <div className="feed-modal-image">
+                    {selectedPost.fileName.endsWith('.mp4') ? (
+                        <video
+                            src={`http://localhost:8000/usersUpload/${selectedPost.fileName}`}
+                            controls
+                            className="feed-modal-image"
+                        />
+                    ) : (
+                        <img
+                            src={`http://localhost:8000/usersUpload/${selectedPost.fileName}`}
+                            alt={selectedPost.caption}
+                            className="feed-modal-image"
+                        />
+                    )}
+                </div>
+                <div className="feed-modal-info">
+                    <div className="feed-modal-user-info">
+                        <img
+                            src={`http://localhost:8000/profilepic/${selectedPost.userDetails?.profilePic || 'default-profile-pic.jpg'}`}
+                            alt="Profile"
+                            className="feed-modal-profile-pic"
+                        />
+                        <div className="feed-modal-user-details">
+                            <div className="feed-modal-user-name-nickname">
+                                <span className="feed-modal-user-name">{selectedPost.userDetails?.name || 'Unknown User'}</span>
+                                <span className="feed-modal-user-nickname">@{selectedPost.userDetails?.nickName || 'unknown_nickname'}</span>
                             </div>
-                            <div className="feed-modal-info">
-                                <div className="feed-modal-user-info">
-                                    <img
-                                        src={`http://localhost:8000/profilepic/${selectedPost.userDetails?.profilePic || 'default-profile-pic.jpg'}`}
-                                        alt="Profile"
-                                        className="feed-modal-profile-pic"
-                                    />
-                                    <div className="feed-modal-user-details">
-                                        <span className="feed-modal-user-name">{selectedPost.userDetails?.name || 'Unknown User'}</span>
-                                        <span className="feed-modal-user-nickname">@{selectedPost.userDetails?.nickName || 'unknown_nickname'}</span>
-                                        <span className="feed-modal-upload-time">
-                                            {timeAgo(selectedPost.createdAt)}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="feed-modal-separator"></div>
-                                <p className="feed-modal-caption">{selectedPost.caption}</p>
-                                <div className="feed-modal-comments-section">
-                                    <div className="feed-modal-comments">
-                                        {comments[selectedPost._id]?.map((comment, index) => (
-                                            <div key={index} className="feed-modal-comment">
-                                                <img
-                                                    src={`http://localhost:8000/profilepic/${comment.author.profilePic || 'default-profile-pic.jpg'}`}
-                                                    alt="Profile"
-                                                    className="feed-modal-comment-profile-pic"
-                                                />
-                                                <div className="feed-modal-comment-content">
-                                                    <div className="feed-modal-comment-header">
-                                                        <strong>{comment.author.name || 'Unknown User'}</strong>
-                                                        <br />
-                                                        <span style={{ color: 'gray', fontSize: '0.5rem' }} className="feed-modal-comment-timestamp">
-                                                            {timeAgo(comment.timestamp)}
-                                                        </span>
-                                                    </div>
-                                                    <p>{comment.text}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div className="feed-modal-add-comment">
-                                        <textarea
-                                            className="feed-modal-comment-input"
-                                            placeholder="Add a comment..."
-                                            value={newComment}
-                                            onChange={(e) => setNewComment(e.target.value)}
-                                        ></textarea>
-                                        <button onClick={handleCommentSubmit}>Post</button>
-                                    </div>
-                                </div>
-                            </div>
+                            <span className="feed-modal-upload-time">
+                                {timeAgo(selectedPost.createdAt)}
+                            </span>
                         </div>
-                        <div className="feed-modal-close" onClick={handleCloseModal}>×</div>
+                    </div>
+                    <div className="feed-modal-separator"></div>
+                    <p className="feed-modal-caption">{selectedPost.caption}</p>
+                    <div className="feed-modal-comments-section">
+                        <div className="feed-modal-comments">
+                            {comments[selectedPost._id]?.map((comment, index) => (
+                                <div key={index} className="feed-modal-comment">
+                                    <img
+                                        src={`http://localhost:8000/profilepic/${comment.author.profilePic || 'default-profile-pic.jpg'}`}
+                                        alt="Profile"
+                                        className="feed-modal-comment-profile-pic"
+                                    />
+                                    <div className="feed-modal-comment-content">
+                                        <div className="feed-modal-comment-header">
+                                            <strong>{comment.author.name || 'Unknown User'}</strong>
+                                            <br />
+                                            <span style={{ color: 'gray', fontSize: '0.5rem' }} className="feed-modal-comment-timestamp">
+                                                {timeAgo(comment.timestamp)}
+                                            </span>
+                                        </div>
+                                        <p>{comment.text}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="feed-modal-add-comment">
+                            <textarea
+                                className="feed-modal-comment-input"
+                                placeholder="Add a comment..."
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                            ></textarea>
+                            <button onClick={handleCommentSubmit}>Post</button>
+                        </div>
                     </div>
                 </div>
-            )}
+            </div>
+            <div className="feed-modal-close" onClick={handleCloseModal}>×</div>
+        </div>
+    </div>
+)}
+
         </div>
     );
 };

@@ -144,7 +144,7 @@
 
 .feed-modal-user-info {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 15px;
 }
 
@@ -160,16 +160,32 @@
     flex-direction: column;
 }
 
-.feed-modal-user-name {
-    font-weight: bold;
-    cursor: pointer;
+.feed-modal-user-name-nickname {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
 }
 
-.feed-modal-user-nickname,
+.feed-modal-user-name {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.feed-modal-user-nickname {
+    color: #666;
+    font-size: 0.8rem;
+    margin-right: 10px;
+}
+
 .feed-modal-upload-time {
     color: #666;
     font-size: 0.8rem;
-    margin-top: 5px;
+}
+
+.feed-modal-info-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 .feed-modal-separator {
@@ -181,7 +197,7 @@
 
 .feed-modal-caption {
     margin-top: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     text-align: left;
     cursor: default;
 }
