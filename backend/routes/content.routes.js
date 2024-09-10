@@ -1,3 +1,4 @@
+//content.routes.js
 import express from 'express';
 import path from 'path';
 import Content from '../models/content.model.js';
