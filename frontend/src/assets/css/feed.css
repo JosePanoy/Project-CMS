@@ -51,35 +51,24 @@
     height: auto;
 }
 
-.feed-item-icons {
+.feed-item-actions {
     display: flex;
     align-items: center;
     margin-top: 10px;
 }
 
-.feed-item-icon {
-    font-size: 1.2em;
-    cursor: pointer;
-    margin-right: 15px;
-}
-
 .feed-item-heart-icon {
     margin-right: 10px;
-    color: black; 
+    color: black;
     cursor: pointer;
 }
+
 .feed-item-heart-icon.liked {
-    color: red; 
-    cursor: pointer;
+    color: red;
 }
 
 .feed-item-comment-icon {
-    margin-right: 10px;
     margin-left: 10px;
-}
-
-.feed-item-save-icon {
-    margin-left: auto;
 }
 
 .feed-item-divider {
@@ -87,7 +76,7 @@
     margin: 10px 0;
 }
 
-/* Modal overlay for Feed modal */
+/***for modal***/
 .feed-modal {
     position: fixed;
     top: 0;
@@ -125,7 +114,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 53%;
+    left: 60%;
     width: 1px;
     background-color: #bfbfbf;
     transform: translateX(-50%);
@@ -146,24 +135,17 @@
     max-height: 100%;
 }
 
-.feed-modal-right {
-    width: 50%;
+.feed-modal-info {
+    width: 40%;
     padding: 15px;
     display: flex;
     flex-direction: column;
 }
 
-.feed-modal-header {
+.feed-modal-user-info {
     display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.feed-modal-separator {
-    width: 100%;
-    height: 1px;
-    background-color: #ddd;
-    margin: 10px 0;
+    align-items: flex-start;
+    margin-bottom: 15px;
 }
 
 .feed-modal-profile-pic {
@@ -173,7 +155,7 @@
     margin-right: 10px;
 }
 
-.feed-modal-user-info {
+.feed-modal-user-details {
     display: flex;
     flex-direction: column;
 }
@@ -183,11 +165,18 @@
     cursor: pointer;
 }
 
-.feed-modal-user-nickname {
+.feed-modal-user-nickname,
+.feed-modal-upload-time {
     color: #666;
-    cursor: pointer;
-    text-align: left;
     font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+.feed-modal-separator {
+    width: 100%;
+    height: 1px;
+    background-color: #ddd;
+    margin: 10px 0;
 }
 
 .feed-modal-caption {
@@ -195,24 +184,6 @@
     margin-bottom: 15px;
     text-align: left;
     cursor: default;
-}
-
-.feed-modal-icons {
-    display: flex;
-    align-items: center;
-    margin-top: auto;
-}
-
-.feed-modal-icons .feed-modal-icon {
-    font-size: 1.5em;
-    margin-right: 15px;
-    cursor: pointer;
-}
-
-.feed-modal-upload-time {
-    font-size: 0.8em;
-    color: #666;
-    margin-bottom: 10px;
 }
 
 .feed-modal-comments-section {
@@ -224,12 +195,70 @@
 }
 
 .feed-modal-comment-input {
-    width: 100%;
+    flex: 1;
+    height: 60px;
     padding: 10px;
-    border: none;
     border-radius: 5px;
-    background-color: #f0f0f0;
+    border: 1px solid #dbdbdb;
     font-size: 14px;
+    resize: none;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    margin-right: 10px;
+}
+
+.feed-modal-add-comment {
+    display: flex;
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 10px;
+}
+
+.feed-modal-add-comment button {
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.feed-modal-add-comment button:hover {
+    background-color: #007bb5;
+}
+
+.feed-modal-comments {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.feed-modal-comment {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.feed-modal-comment-profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.feed-modal-comment strong {
+    color: #262626;
+    font-weight: 500;
+    margin-right: 5px;
+    font-size: 0.9rem;
+}
+
+.feed-modal-comment p {
+    margin: 0;
+    color: #202020;
+    font-size: 0.9rem;
 }
 
 .feed-modal-close {
@@ -243,76 +272,4 @@
 
 .feed-modal-close:hover {
     color: #333;
-}
-
-
-
-
-/********************/
-/* Feed Modal Comments Section */
-.feed-modal-comments-section {
-    margin-top: 20px;
-}
-
-.feed-modal-comments {
-    max-height: 300px;
-    overflow-y: auto;
-    margin-bottom: 10px;
-}
-
-.feed-modal-comment {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 10px;
-}
-
-.feed-modal-comment-profile-pic {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 10px;
-}
-
-.feed-modal-comment strong {
-    color: #262626;
-    font-weight: bold;
-    margin-right: 5px;
-}
-
-.feed-modal-comment p {
-    margin: 0;
-    color: #8e8e8e;
-}
-
-.feed-modal-add-comment {
-    display: flex;
-    flex-direction: column;
-}
-
-.feed-modal-comment-input {
-    width: 100%;
-    height: 60px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #dbdbdb;
-    margin-bottom: 10px;
-    font-size: 14px;
-    resize: none;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.feed-modal-add-comment button {
-    background-color: #0095f6;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.feed-modal-add-comment button:hover {
-    background-color: #007bb5;
 }

@@ -3,6 +3,20 @@ import axios from 'axios';
 import { FaHeart, FaComment } from 'react-icons/fa';
 import '../src/assets/css/feed.css';
 
+// Function to format the date into a "time ago" format
+const timeAgo = (date) => {
+    const now = new Date();
+    const seconds = Math.floor((now - new Date(date)) / 1000);
+    const interval = Math.floor(seconds / 31536000); // Seconds in a year
+
+    if (interval > 1) return `${interval} years ago`;
+    if (Math.floor(seconds / 2592000) > 1) return `${Math.floor(seconds / 2592000)} months ago`;
+    if (Math.floor(seconds / 86400) > 1) return `${Math.floor(seconds / 86400)} days ago`;
+    if (Math.floor(seconds / 3600) > 1) return `${Math.floor(seconds / 3600)} hours ago`;
+    if (Math.floor(seconds / 60) > 1) return `${Math.floor(seconds / 60)} minutes ago`;
+    return `${Math.floor(seconds)} seconds ago`;
+};
+
 const Feed = () => {
     const [contents, setContents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -12,24 +26,24 @@ const Feed = () => {
     const [comments, setComments] = useState({});
     const [newComment, setNewComment] = useState('');
 
-    const fetchContents = async () => {
-        try {
-            const response = await axios.get('http://localhost:8000/api/content/newsfeed', {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
-            const sortedContents = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setContents(sortedContents);
-            const liked = new Set(sortedContents.filter(post => post.isLiked).map(post => post._id));
-            setLikedPosts(liked);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching data:', error.response?.data || error.message);
-            setError('Failed to fetch content');
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
+        const fetchContents = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/content/newsfeed', {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                });
+                const sortedContents = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setContents(sortedContents);
+                const liked = new Set(sortedContents.filter(post => post.isLiked).map(post => post._id));
+                setLikedPosts(liked);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error.response?.data || error.message);
+                setError('Failed to fetch content');
+                setLoading(false);
+            }
+        };
+
         fetchContents();
     }, []);
 
@@ -47,11 +61,7 @@ const Feed = () => {
                 );
                 setLikedPosts(prev => {
                     const newSet = new Set(prev);
-                    if (prev.has(postId)) {
-                        newSet.delete(postId);
-                    } else {
-                        newSet.add(postId);
-                    }
+                    newSet.has(postId) ? newSet.delete(postId) : newSet.add(postId);
                     return newSet;
                 });
             } else {
@@ -105,16 +115,6 @@ const Feed = () => {
             ) : (
                 contents.map(content => {
                     const isVideo = content.fileName.endsWith('.mp4');
-                    const date = new Date(content.createdAt);
-                    const formattedDate = date.toLocaleString('en-US', {
-                        month: '2-digit',
-                        day: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                    });
-
                     const user = content.userDetails || {};
                     const profilePic = user.profilePic || 'default-profile-pic.jpg';
                     const userName = user.name || 'Unknown User';
@@ -129,7 +129,7 @@ const Feed = () => {
                                 />
                                 <div className="feed-item-user-details">
                                     <span className="feed-item-user-name">{userName}</span>
-                                    <span className="feed-item-post-date">{formattedDate}</span>
+                                    <span className="feed-item-post-date">{timeAgo(content.createdAt)}</span>
                                 </div>
                             </div>
                             <div className="feed-item-content-body">
@@ -191,46 +191,47 @@ const Feed = () => {
                                         alt="Profile"
                                         className="feed-modal-profile-pic"
                                     />
-                                    <div className="feed-modal-user-info">
+                                    <div className="feed-modal-user-details">
                                         <span className="feed-modal-user-name">{selectedPost.userDetails?.name || 'Unknown User'}</span>
                                         <span className="feed-modal-user-nickname">@{selectedPost.userDetails?.nickName || 'unknown_nickname'}</span>
                                         <span className="feed-modal-upload-time">
-                                            {new Date(selectedPost.createdAt).toLocaleString('en-US', {
-                                                month: 'long',
-                                                day: 'numeric',
-                                                year: 'numeric',
-                                                hour: 'numeric',
-                                                minute: 'numeric',
-                                                hour12: true
-                                            })}
+                                            {timeAgo(selectedPost.createdAt)}
                                         </span>
                                     </div>
                                 </div>
                                 <div className="feed-modal-separator"></div>
                                 <p className="feed-modal-caption">{selectedPost.caption}</p>
                                 <div className="feed-modal-comments-section">
-                                    <div className="feed-modal-comments">
-                                    {comments[selectedPost._id]?.map((comment, index) => (
-                                        <div key={index} className="feed-modal-comment">
-                                            <img
-                                                src={`http://localhost:8000/profilepic/${comment.author.profilePic || 'default-profile-pic.jpg'}`}
-                                                alt="Profile"
-                                                className="feed-modal-comment-profile-pic"
-                                            />
-                                            <strong>{comment.author.name || 'Unknown User'}</strong>: 
-                                            <span style={{ color: 'black' }}>{comment.text}</span>
-                                        </div>
-                                    ))}
+
+                    <div className="feed-modal-comments">
+                        {comments[selectedPost._id]?.map((comment, index) => (
+                            <div key={index} className="feed-modal-comment">
+                                <img
+                                    src={`http://localhost:8000/profilepic/${comment.author.profilePic || 'default-profile-pic.jpg'}`}
+                                    alt="Profile"
+                                    className="feed-modal-comment-profile-pic"
+                                />
+                                <div className="feed-modal-comment-content">
+                                    <div className="feed-modal-comment-header">
+                                        <strong>{comment.author.name || 'Unknown User'}</strong> <br />
+                                        <span style={{color:'gray', fontSize: '0.5rem'}} className="feed-modal-comment-timestamp">{timeAgo(comment.createdAt)}</span>
                                     </div>
-                                    <div className="feed-modal-add-comment">
-                                        <textarea
-                                            className="feed-modal-comment-input"
-                                            placeholder="Add a comment..."
-                                            value={newComment}
-                                            onChange={(e) => setNewComment(e.target.value)}
-                                        ></textarea>
-                                        <button onClick={handleCommentSubmit}>Post</button>
-                                    </div>
+                                    <p>{comment.text}</p>
+                                </div>
+                            </div>
+                            ))}
+                        </div>
+
+                        <div className="feed-modal-add-comment">
+                        <textarea
+                            className="feed-modal-comment-input"
+                            placeholder="Add a comment..."
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                        ></textarea>
+                        <button onClick={handleCommentSubmit}>Post</button>
+                    </div>
+
                                 </div>
                             </div>
                         </div>
