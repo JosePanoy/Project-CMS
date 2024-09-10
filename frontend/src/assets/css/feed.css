@@ -245,75 +245,74 @@
     color: #333;
 }
 
+
+
+
+/********************/
+/* Feed Modal Comments Section */
+.feed-modal-comments-section {
+    margin-top: 20px;
+}
+
 .feed-modal-comments {
-    flex-grow: 1;
+    max-height: 300px;
     overflow-y: auto;
-    padding-right: 10px;
     margin-bottom: 10px;
 }
 
 .feed-modal-comment {
     display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
+    align-items: flex-start;
+    margin-bottom: 10px;
 }
 
-.feed-modal-comment-author {
+.feed-modal-comment-profile-pic {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.feed-modal-comment strong {
+    color: #262626;
     font-weight: bold;
-    font-size: 0.9em;
-    cursor: pointer;
+    margin-right: 5px;
 }
 
-.feed-modal-comment-timestamp {
-    font-size: 0.7em;
-    color: gray;
-    margin-top: 2px;
-    cursor: default;
-}
-
-.feed-modal-comment-text {
-    margin-top: 5px;
-    font-size: 0.9em;
-    word-wrap: break-word;
+.feed-modal-comment p {
+    margin: 0;
+    color: #8e8e8e;
 }
 
 .feed-modal-add-comment {
     display: flex;
-    align-items: center;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
+    flex-direction: column;
 }
 
-.feed-modal-add-comment textarea {
-    flex-grow: 1;
-    border: none;
-    padding: 5px;
-    font-size: 0.9em;
+.feed-modal-comment-input {
+    width: 100%;
+    height: 60px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #dbdbdb;
+    margin-bottom: 10px;
+    font-size: 14px;
     resize: none;
-    outline: none;
-    height: 40px;
-    border-radius: 8px;
-    background-color: #f5f5f5;
-    margin-right: 10px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .feed-modal-add-comment button {
-    background-color: #3897f0;
+    background-color: #0095f6;
     color: white;
     border: none;
-    padding: 5px 10px;
-    font-weight: bold;
+    padding: 10px;
     border-radius: 5px;
+    font-size: 14px;
     cursor: pointer;
-    font-size: 0.9em;
+    transition: background-color 0.3s;
 }
 
-.feed-modal-add-comment button:disabled {
-    background-color: #b2dffc;
-    cursor: not-allowed;
-}
-
-.feed-modal-caption {
-    margin-bottom: 20px;
-    font-size: 1em;
+.feed-modal-add-comment button:hover {
+    background-color: #007bb5;
 }

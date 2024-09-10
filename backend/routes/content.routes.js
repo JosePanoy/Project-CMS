@@ -32,6 +32,7 @@ router.post('/upload', authenticate, upload.single('file'), async (req, res) => 
     }
 });
 
+router.post('/upload', authenticate, upload.single('file'), uploadContent);
 router.get('/newsfeed', authenticate, getNewsfeed);
 router.post('/like/:postId', authenticate, likePost);
 router.post('/comment/:postId', authenticate, postComment);

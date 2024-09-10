@@ -1,4 +1,5 @@
 import Content from '../models/content.model.js';
+import User from '../models/user.model.js';
 
 export const uploadContent = async (req, res) => {
     const { caption } = req.body;
@@ -55,8 +56,8 @@ export const getNewsfeed = async (req, res) => {
         ]);
 
         const contentsWithStatus = contents.map(content => {
-            const isLiked = Array.isArray(content.likes) && content.likes.includes(userId);
-            const isBookmarked = Array.isArray(content.bookmarkedBy) && content.bookmarkedBy.includes(userId);
+            const isLiked = content.likes.includes(userId);
+            const isBookmarked = content.bookmarkedBy.includes(userId);
             return {
                 ...content,
                 isLiked,
@@ -71,8 +72,6 @@ export const getNewsfeed = async (req, res) => {
     }
 };
 
-
-// handle like post 
 export const likePost = async (req, res) => {
     const userId = req.user._id; // Extract userId as a string
     const { postId } = req.params;
@@ -88,22 +87,18 @@ export const likePost = async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        // Clean up any null values in likes
-        post.likes = post.likes.filter(id => id); // Remove null or undefined IDs
+        post.likes = post.likes.filter(id => id); // Clean up null values
 
         const hasLiked = post.likes.includes(userId);
 
         if (hasLiked) {
-            // Unlike: remove userId from likes
             post.likes = post.likes.filter(id => id !== userId);
         } else {
-            // Like: add userId to likes
             post.likes.push(userId);
         }
 
         await post.save();
 
-        // Send back the updated number of likes
         res.status(200).json({ message: 'Post liked/unliked successfully', likes: post.likes.length });
     } catch (error) {
         console.error('Error liking post:', error);
@@ -111,7 +106,6 @@ export const likePost = async (req, res) => {
     }
 };
 
-// post comment
 export const postComment = async (req, res) => {
     const { postId } = req.params;
     const { text } = req.body;
@@ -130,10 +124,12 @@ export const postComment = async (req, res) => {
 
         post.comments.push({
             author: userId,
-            text
+            text,
+            timestamp: new Date()
         });
 
         await post.save();
+
         res.status(201).json({ message: 'Comment added successfully', comments: post.comments });
     } catch (error) {
         console.error('Error posting comment:', error);
@@ -142,22 +138,33 @@ export const postComment = async (req, res) => {
 };
 
 
-// display comments
+
 export const getComments = async (req, res) => {
     const { postId } = req.params;
 
     try {
-        const post = await Content.findById(postId)
-            .populate({
-                path: 'comments.author',
-                select: 'name profilePic' // Populate the author field with name and profilePic
-            });
+        const post = await Content.findById(postId);
 
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        res.json(post.comments);
+        const userIds = post.comments.map(comment => comment.author);
+
+        // Fetch user details
+        const users = await User.find({ _id: { $in: userIds } }).select('name profilePic');
+        const userMap = users.reduce((map, user) => {
+            map[user._id] = user;
+            return map;
+        }, {});
+
+        // Map comments to include user details
+        const commentsWithUserDetails = post.comments.map(comment => ({
+            ...comment,
+            author: userMap[comment.author] || { name: 'Unknown User', profilePic: 'default-profile-pic.jpg' }
+        }));
+
+        res.json(commentsWithUserDetails);
     } catch (error) {
         console.error('Error fetching comments:', error);
         res.status(500).json({ message: 'Server error' });
