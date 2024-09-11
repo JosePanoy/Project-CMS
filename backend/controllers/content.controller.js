@@ -192,24 +192,39 @@ export const bookmarkPost = async (req, res) => {
 };
 
 
-// displays bookmarked post
+// displays bookmarked
 export const getBookmarkedPosts = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        const user = await User.findById(userId).populate({
-            path: 'bookmarkedPosts',
-            populate: {
-                path: 'userId',
-                select: 'name profilePic'
-            }
-        });
-
+        // Find the user and get bookmarked post IDs
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        res.json(user.bookmarkedPosts);
+        // Aggregate to join Content and User collections
+        const bookmarkedPosts = await Content.aggregate([
+            {
+                $match: { _id: { $in: user.bookmarkedPosts } }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'userDetails'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$userDetails',
+                    preserveNullAndEmptyArrays: true
+                }
+            }
+        ]);
+
+        res.json(bookmarkedPosts);
     } catch (error) {
         console.error('Error fetching bookmarked posts:', error);
         res.status(500).json({ message: 'Server error' });

@@ -26,6 +26,29 @@ const SavePost = () => {
         fetchSavedPosts();
     }, []);
 
+    const timeAgo = (date) => {
+        const now = new Date();
+        const seconds = Math.floor((now - new Date(date)) / 1000);
+        
+        const interval = Math.floor(seconds / 31536000); 
+        if (interval > 1) return `${interval} years ago`;
+        
+        const monthInterval = Math.floor(seconds / 2592000);
+        if (monthInterval > 1) return `${monthInterval} months ago`;
+        
+        const dayInterval = Math.floor(seconds / 86400); 
+        if (dayInterval > 1) return `${dayInterval} days ago`;
+        
+        const hourInterval = Math.floor(seconds / 3600); 
+        if (hourInterval > 1) return `${hourInterval} hours ago`;
+        if (hourInterval >= 1) return '1 hour ago'; 
+        
+        const minuteInterval = Math.floor(seconds / 60); 
+        if (minuteInterval > 1) return `${minuteInterval} mins ago`;
+        
+        return `${Math.floor(seconds)} seconds ago`;
+    };
+
     if (loading) return <div className="saved-posts-loading">Loading...</div>;
     if (error) return <div className="saved-posts-error">{error}</div>;
 
@@ -41,12 +64,13 @@ const SavePost = () => {
                         <div key={post._id} className="saved-post-item">
                             <div className="saved-post-user-info">
                                 <img
-                                    src={`http://localhost:8000/profilepic/${post.userId.profilePic || 'default-profile-pic.jpg'}`}
+                                    src={`http://localhost:8000/profilepic/${post.userDetails.profilePic || 'default-profile-pic.jpg'}`}
                                     alt="Profile"
                                     className="saved-post-user-profile-pic"
                                 />
                                 <div className="saved-post-user-details">
-                                    <span className="saved-post-user-name">{post.userId.name || 'Unknown User'}</span>
+                                    <span className="saved-post-user-name">{post.userDetails.name || 'Unknown User'}</span>
+                                    <span className="saved-post-post-date">{timeAgo(post.createdAt)}</span>
                                 </div>
                             </div>
                             <div className="saved-post-content-body">
