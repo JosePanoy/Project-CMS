@@ -32,7 +32,7 @@ const SavePost = () => {
     return (
         <>
             <DashboardSidebar />
-            <h3 className="saved-posts-header" style={{marginTop: '50px'}}>Saved Posts</h3>
+            <h3 className="saved-posts-header" style={{ marginTop: '50px' }}>Saved Posts</h3>
             <div className="saved-posts-container">
                 {savedPosts.length === 0 ? (
                     <p>No saved posts available</p>
