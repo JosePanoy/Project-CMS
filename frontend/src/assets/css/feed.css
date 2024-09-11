@@ -174,13 +174,13 @@
 
 .feed-modal-user-nickname {
     color: #666;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     margin-right: 10px;
 }
 
 .feed-modal-upload-time {
     color: #666;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
 }
 
 .feed-modal-info-row {
@@ -293,5 +293,6 @@
 
 .feed-item-likes-count{
     font-size: 0.7rem;
+    margin-top: 5px;
     margin-top: 5px;
 }

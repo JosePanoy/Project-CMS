@@ -133,6 +133,16 @@ const Feed = () => {
         setSelectedPost(null);
     };
 
+    const handleLikesClick = async () => {
+        try {
+            const response = await axios.get(`/api/content/likes/${content._id}`);
+            setLikesUsers(response.data);
+            setShowLikesModal(true);
+        } catch (error) {
+            console.error('Error fetching likes users:', error);
+        }
+    };
+
     const handleCommentSubmit = async () => {
         if (!newComment.trim() || !selectedPost) return;
         try {
@@ -241,7 +251,10 @@ const Feed = () => {
                                     />
                                 )}
                             </div>
+
+
                             <div className="feed-modal-info">
+                                
                                 <div className="feed-modal-user-info">
                                     <img
                                         src={`http://localhost:8000/profilepic/${selectedPost.userDetails?.profilePic || 'default-profile-pic.jpg'}`}
@@ -250,14 +263,17 @@ const Feed = () => {
                                     />
                                     <div className="feed-modal-user-details">
                                         <div className="feed-modal-user-name-nickname">
-                                            <span className="feed-modal-user-name">{selectedPost.userDetails?.name || 'Unknown User'}</span>
-                                            <span className="feed-modal-user-nickname">@{selectedPost.userDetails?.nickName || 'unknown_nickname'}</span>
+                                            <span className="feed-modal-user-name">{selectedPost.userDetails?.name || 'Unknown User'} </span>  <br />
+                                          
                                         </div>
                                         <span className="feed-modal-upload-time">
-                                            {timeAgo(selectedPost.createdAt)}
+                                        @{selectedPost.userDetails?.nickName || 'unknown_nickname'} {timeAgo(selectedPost.createdAt)} 
                                         </span>
                                     </div>
                                 </div>
+
+
+
                                 <div className="feed-modal-separator"></div>
                                 <p className="feed-modal-caption">{selectedPost.caption}</p>
                                 <div className="feed-modal-comments-section">
