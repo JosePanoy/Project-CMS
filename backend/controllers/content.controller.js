@@ -190,14 +190,20 @@ export const bookmarkPost = async (req, res) => {
     const userId = req.user.id;
   
     try {
-      const user = await User.findById(userId).populate('bookmarkedPosts');
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
+        const user = await User.findById(userId).populate({
+            path: 'bookmarkedPosts',
+            populate: {
+                path: 'userId',
+                select: 'name profilePic'
+            }
+        });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
   
-      res.json(user.bookmarkedPosts);
+        res.json(user.bookmarkedPosts);
     } catch (error) {
-      console.error('Error fetching bookmarked posts:', error);
-      res.status(500).json({ message: 'Server error' });
+        console.error('Error fetching bookmarked posts:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-  };
+};

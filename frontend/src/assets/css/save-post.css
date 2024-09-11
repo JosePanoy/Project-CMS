@@ -1,26 +1,26 @@
+/* save-post.css */
 
 .saved-posts-container {
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
+    gap: 20px;
+    width: 500px;
+    margin: 0 auto;
 }
 
 .saved-post-item {
-    width: 100%;
-    max-width: 500px;
-    background: #fff;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
     overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .saved-post-user-info {
     display: flex;
     align-items: center;
-    padding: 15px;
-    border-bottom: 1px solid #eee;
+    padding: 10px;
 }
 
 .saved-post-user-profile-pic {
@@ -28,50 +28,30 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 15px;
 }
 
 .saved-post-user-details {
-    display: flex;
-    flex-direction: column;
+    margin-left: 10px;
 }
 
 .saved-post-user-name {
     font-weight: bold;
 }
 
-.saved-post-post-date {
-    color: #888;
-    font-size: 0.9em;
-}
-
 .saved-post-content-body {
-    padding: 15px;
+    padding: 10px;
 }
 
 .saved-post-caption {
     margin-bottom: 10px;
-    font-size: 0.95em;
-    color: #333;
 }
 
 .saved-post-content-media {
     width: 100%;
-    border-radius: 8px;
+    height: auto;
 }
 
 .saved-post-content-image {
     width: 100%;
-    border-radius: 8px;
-}
-
-.no-saved-posts {
-    font-size: 1.2em;
-    color: #555;
-}
-
-.save-post-loading, .save-post-error {
-    text-align: center;
-    font-size: 1.2em;
-    margin: 20px 0;
+    height: auto;
 }

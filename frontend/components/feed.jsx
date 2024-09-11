@@ -203,7 +203,7 @@ const Feed = () => {
                                 {bookmarkedPosts.has(content._id) ? (
                                     <FaBookmark
                                         onClick={() => handleBookmark(content._id)}
-                                        style={{ color: 'blue', cursor: 'pointer' }}
+                                        style={{ color: 'yellow', cursor: 'pointer' }}
                                     />
                                 ) : (
                                     <FaRegBookmark
