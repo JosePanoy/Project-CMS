@@ -41,12 +41,12 @@ const SavePost = () => {
                         <div key={post._id} className="saved-post-item">
                             <div className="saved-post-user-info">
                                 <img
-                                    src={`http://localhost:8000/profilepic/${post.userId?.profilePic || 'default-profile-pic.jpg'}`}
+                                    src={`http://localhost:8000/profilepic/${post.userId.profilePic || 'default-profile-pic.jpg'}`}
                                     alt="Profile"
                                     className="saved-post-user-profile-pic"
                                 />
                                 <div className="saved-post-user-details">
-                                    <span className="saved-post-user-name">{post.userId?.name || 'Unknown User'}</span>
+                                    <span className="saved-post-user-name">{post.userId.name || 'Unknown User'}</span>
                                 </div>
                             </div>
                             <div className="saved-post-content-body">

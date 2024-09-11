@@ -2,6 +2,8 @@
 import Content from '../models/content.model.js';
 import User from '../models/user.model.js';
 
+
+// upload contents
 export const uploadContent = async (req, res) => {
     const { caption } = req.body;
     const fileName = req.file ? req.file.filename : null;
@@ -26,6 +28,8 @@ export const uploadContent = async (req, res) => {
     }
 };
 
+
+// get users content
 export const getUserContent = async (req, res) => {
     const userId = req.user.id;
 
@@ -38,6 +42,8 @@ export const getUserContent = async (req, res) => {
     }
 };
 
+
+// displays content in newsfeed
 export const getNewsfeed = async (req, res) => {
     const userId = req.user.id;
 
@@ -73,8 +79,10 @@ export const getNewsfeed = async (req, res) => {
     }
 };
 
+
+// function for like post
 export const likePost = async (req, res) => {
-    const userId = req.user._id; 
+    const userId = req.user._id;
     const { postId } = req.params;
 
     if (!userId) {
@@ -88,7 +96,7 @@ export const likePost = async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        post.likes = post.likes.filter(id => id); 
+        post.likes = post.likes.filter(id => id);
 
         const hasLiked = post.likes.includes(userId);
 
@@ -108,7 +116,7 @@ export const likePost = async (req, res) => {
 };
 
 
-// can post comment
+// function for commenting in post
 export const postComment = async (req, res) => {
     const { postId } = req.params;
     const { text } = req.body;
@@ -141,12 +149,11 @@ export const postComment = async (req, res) => {
 };
 
 
-//display comments
+// getting comments
 export const getComments = async (req, res) => {
     const { postId } = req.params;
 
     try {
-        // Fetch post with comments and populate author details
         const post = await Content.findById(postId).populate({
             path: 'comments.author',
             select: 'name profilePic'
@@ -164,9 +171,7 @@ export const getComments = async (req, res) => {
 };
 
 
-
-
-
+// bookmarked posts
 export const bookmarkPost = async (req, res) => {
     const { postId } = req.params;
     const userId = req.user.id;
@@ -184,19 +189,18 @@ export const bookmarkPost = async (req, res) => {
       console.error('Error bookmarking post:', error);
       res.status(500).json({ message: 'Server error' });
     }
-  };
-  
+};
 
-// content.controller.js
+
+// displays bookmarked post
 export const getBookmarkedPosts = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        // Populate bookmarkedPosts with user details
         const user = await User.findById(userId).populate({
             path: 'bookmarkedPosts',
             populate: {
-                path: 'userId', // Ensure that userId is populated correctly
+                path: 'userId',
                 select: 'name profilePic'
             }
         });

@@ -38,6 +38,6 @@ router.post('/like/:postId', authenticate, likePost);
 router.post('/comment/:postId', authenticate, postComment);
 router.get('/comments/:postId', authenticate, getComments);
 router.post('/bookmark/:postId', authenticate, bookmarkPost); 
-router.get('/bookmarked', authenticate, getBookmarkedPosts);  
+router.get('/bookmarked', authenticate, getBookmarkedPosts);
 
 export default router;
