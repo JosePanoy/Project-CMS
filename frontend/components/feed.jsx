@@ -267,7 +267,7 @@ const Feed = () => {
                                           
                                         </div>
                                         <span className="feed-modal-upload-time">
-                                        @{selectedPost.userDetails?.nickName || 'unknown_nickname'} {timeAgo(selectedPost.createdAt)} 
+                                            @{selectedPost.userDetails?.nickName || 'unknown_nickname'} {timeAgo(selectedPost.createdAt)} 
                                         </span>
                                     </div>
                                 </div>
