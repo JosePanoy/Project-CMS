@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import Content from '../models/content.model.js';
 import { upload } from '../middleware/userscontent.upload.js';
-import { uploadContent, getNewsfeed, likePost, postComment, getComments, bookmarkPost, getBookmarkedPosts, removeBookmark } from '../controllers/content.controller.js';
+import { uploadContent, getNewsfeed, likePost, postComment, getComments, bookmarkPost, getBookmarkedPosts, removeBookmark, getLikes } from '../controllers/content.controller.js';
 import { authenticate } from '../middleware/authenticate.js';
 
 const router = express.Router();
@@ -40,4 +40,6 @@ router.get('/comments/:postId', authenticate, getComments);
 router.post('/bookmark/:postId', authenticate, bookmarkPost); 
 router.get('/bookmarked', authenticate, getBookmarkedPosts);
 router.post('/remove-bookmark/:postId', authenticate, removeBookmark);
+router.get('/likes/:postId', authenticate, getLikes)
+
 export default router;

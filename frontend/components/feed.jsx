@@ -1,3 +1,4 @@
+// content.controller.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaHeart, FaComment, FaBookmark, FaRegBookmark } from 'react-icons/fa';
@@ -36,6 +37,7 @@ const Feed = () => {
     const [comments, setComments] = useState({});
     const [newComment, setNewComment] = useState('');
     const [showLikesModal, setShowLikesModal] = useState(false);
+    const [likesData, setLikesData] = useState([]);
 
     useEffect(() => {
         const fetchContents = async () => {
@@ -46,7 +48,6 @@ const Feed = () => {
                 const sortedContents = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setContents(sortedContents);
 
-                // Initialize likedPosts from fetched data
                 const liked = new Set(sortedContents.filter(post => post.isLiked).map(post => post._id));
                 setLikedPosts(liked);
 
@@ -134,10 +135,18 @@ const Feed = () => {
         setSelectedPost(null);
     };
 
-    const handleShowLikesModal = () => {
-        setShowLikesModal(true);
+    const handleShowLikesModal = async (postId) => {
+        try {
+            const response = await axios.get(`http://localhost:8000/api/content/likes/${postId}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+            setLikesData(response.data);
+            setShowLikesModal(true);
+        } catch (error) {
+            console.error('Error fetching likes:', error.response?.data || error.message);
+        }
     };
-    
+
     const handleCloseLikesModal = () => {
         setShowLikesModal(false);
     };
@@ -168,7 +177,7 @@ const Feed = () => {
                     const user = content.userDetails || {};
                     const profilePic = user.profilePic || 'default-profile-pic.jpg';
                     const userName = user.name || 'Unknown User';
-    
+
                     return (
                         <div key={content._id} className="feed-item-container">
                             <div className="feed-item-user-info">
@@ -220,7 +229,7 @@ const Feed = () => {
                                     />
                                 )}
                             </div>
-                            <div className="feed-item-likes-count" style={{cursor: 'pointer'}} onClick={handleShowLikesModal}>
+                            <div className="feed-item-likes-count" style={{ cursor: 'pointer' }} onClick={() => handleShowLikesModal(content._id)}>
                                 {content.likesCount > 0 && (
                                     <>
                                         {content.likesCount} {content.likesCount === 1 ? 'like' : 'likes'}
@@ -232,16 +241,35 @@ const Feed = () => {
                     );
                 })
             )}
-    
+
+
             {showLikesModal && (
                 <div className="feed-likes-modal">
                     <div className="feed-likes-modal-content">
-                        <h2>LIKES</h2>
-                        <div className="feed-likes-modal-close" onClick={handleCloseLikesModal}>×</div>
+                        <h2 className="feed-likes-modal-title">LIKES</h2>
+                        <button className="feed-likes-modal-close" onClick={handleCloseLikesModal}>×</button>
+                        <div className="feed-likes-list">
+                            {likesData.map(user => (
+                                <div key={user._id} className="feed-likes-item">
+                                    <img
+                                        src={`http://localhost:8000/profilepic/${user.profilePic || 'default-profile-pic.jpg'}`}
+                                        alt={user.name}
+                                        className="feed-likes-avatar"
+                                    />
+                                    <div className="feed-likes-info">
+                                        <span className="feed-likes-name">{user.name}</span>
+                                        <span className="feed-likes-nickname">@{user.nickName || 'unknown_nickname'}</span>
+                                    </div>
+                                    <button className="feed-likes-follow-button">Follow</button>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
-    
+
+
+
             {selectedPost && (
                 <div className="feed-modal">
                     <div className="feed-modal-content">
@@ -269,12 +297,8 @@ const Feed = () => {
                                         className="feed-modal-profile-pic"
                                     />
                                     <div className="feed-modal-user-details">
-                                        <div className="feed-modal-user-name-nickname">
-                                            <span className="feed-modal-user-name">{selectedPost.userDetails?.name || 'Unknown User'} </span>  <br />
-                                        </div>
-                                        <span className="feed-modal-upload-time">
-                                            @{selectedPost.userDetails?.nickName || 'unknown_nickname'} {timeAgo(selectedPost.createdAt)} 
-                                        </span>
+                                        <span className="feed-modal-user-name">{selectedPost.userDetails?.name || 'Unknown User'}</span>
+                                        <span className="feed-modal-upload-time">@{selectedPost.userDetails?.nickName || 'unknown_nickname'} {timeAgo(selectedPost.createdAt)}</span>
                                     </div>
                                 </div>
                                 <div className="feed-modal-separator"></div>
@@ -291,7 +315,6 @@ const Feed = () => {
                                                 <div className="feed-modal-comment-content">
                                                     <div className="feed-modal-comment-header">
                                                         <strong>{comment.author.name || 'Unknown User'}</strong>
-                                                        <br />
                                                         <span style={{ color: 'gray', fontSize: '0.5rem' }} className="feed-modal-comment-timestamp">
                                                             {timeAgo(comment.timestamp)}
                                                         </span>
@@ -319,7 +342,6 @@ const Feed = () => {
             )}
         </div>
     );
-    
 };
 
 export default Feed;

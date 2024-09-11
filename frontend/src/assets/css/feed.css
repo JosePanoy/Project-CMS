@@ -305,7 +305,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -314,23 +314,84 @@
 
 .feed-likes-modal-content {
     background: white;
-    padding: 20px;
     border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh; 
+    padding: 20px;
     position: relative;
-    width: 80%;
-    max-width: 500px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.feed-likes-modal h2 {
+.feed-likes-modal-title {
     margin: 0;
-    font-size: 24px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
 }
 
 .feed-likes-modal-close {
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 24px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
     cursor: pointer;
+    color: #888;
+}
+
+.feed-likes-list {
+    margin-top: 20px;
+    max-height: calc(80vh - 60px); 
+    overflow-y: auto; 
+    overflow-x: hidden; 
+}
+
+.feed-likes-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.feed-likes-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.feed-likes-info {
+    flex: 1;
+}
+
+.feed-likes-name {
+    display: block;
+    font-weight: bold;
+    cursor: default;
+}
+
+.feed-likes-nickname {
+    color: #555;
+    font-size: 0.7rem;
+    cursor: default;
+}
+
+.feed-likes-follow-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: auto;
+}
+
+.feed-likes-follow-button:hover {
+    background-color: #0056b3;
 }

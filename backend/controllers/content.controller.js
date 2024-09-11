@@ -80,8 +80,6 @@ export const getNewsfeed = async (req, res) => {
     }
 };
 
-
-// function for like post
 // function for like post
 export const likePost = async (req, res) => {
     const userId = req.user._id;
@@ -199,13 +197,11 @@ export const getBookmarkedPosts = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        // Find the user and get bookmarked post IDs
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Aggregate to join Content and User collections
         const bookmarkedPosts = await Content.aggregate([
             {
                 $match: { _id: { $in: user.bookmarkedPosts } }
@@ -244,14 +240,35 @@ export const removeBookmark = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
-        // Remove post from user's bookmarkedPosts
         user.bookmarkedPosts = user.bookmarkedPosts.filter(id => id.toString() !== postId);
         await user.save();
 
         res.status(200).json({ message: 'Bookmark removed successfully' });
     } catch (error) {
         console.error('Error removing bookmark:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+// Get users who liked a post
+export const getLikes = async (req, res) => {
+    const { postId } = req.params;
+
+    try {
+        const post = await Content.findById(postId).populate({
+            path: 'likes',
+            model: 'User',
+            select: 'name nickName profilePic'
+        });
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        res.json(post.likes);
+    } catch (error) {
+        console.error('Error fetching likes:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };
