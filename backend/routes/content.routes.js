@@ -37,7 +37,7 @@ router.get('/newsfeed', authenticate, getNewsfeed);
 router.post('/like/:postId', authenticate, likePost);
 router.post('/comment/:postId', authenticate, postComment);
 router.get('/comments/:postId', authenticate, getComments);
-router.post('/bookmark/:postId', authenticate, bookmarkPost);  // New route for bookmarking
-router.get('/bookmarked', authenticate, getBookmarkedPosts);  // New route for fetching bookmarked posts
+router.post('/bookmark/:postId', authenticate, bookmarkPost); 
+router.get('/bookmarked', authenticate, getBookmarkedPosts);  
 
 export default router;
