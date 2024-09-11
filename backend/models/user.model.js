@@ -1,4 +1,4 @@
-//user.model.js
+// user.model.js
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
@@ -10,8 +10,18 @@ const userSchema = new mongoose.Schema({
   contact: { type: String, required: true },
   password: { type: String, required: true },
   profilePic: { type: String },
-  bookmarkedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Content' }] 
+  bookmarkedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Content' }]
 });
+
+userSchema.methods.toggleBookmark = async function(postId) {
+  const index = this.bookmarkedPosts.indexOf(postId);
+  if (index === -1) {
+    this.bookmarkedPosts.push(postId);
+  } else {
+    this.bookmarkedPosts.splice(index, 1);
+  }
+  await this.save();
+};
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 

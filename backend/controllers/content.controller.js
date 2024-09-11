@@ -162,3 +162,42 @@ export const getComments = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+
+
+
+
+export const bookmarkPost = async (req, res) => {
+    const { postId } = req.params;
+    const userId = req.user.id;
+  
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      await user.toggleBookmark(postId);
+  
+      res.status(200).json({ message: 'Bookmark toggled successfully' });
+    } catch (error) {
+      console.error('Error bookmarking post:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+  
+  export const getBookmarkedPosts = async (req, res) => {
+    const userId = req.user.id;
+  
+    try {
+      const user = await User.findById(userId).populate('bookmarkedPosts');
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.json(user.bookmarkedPosts);
+    } catch (error) {
+      console.error('Error fetching bookmarked posts:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
