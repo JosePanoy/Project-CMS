@@ -290,3 +290,8 @@
 .feed-modal-close:hover {
     color: #333;
 }
+
+.feed-item-likes-count{
+    font-size: 0.7rem;
+    margin-top: 5px;
+}

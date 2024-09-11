@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaHeart, FaComment, FaBookmark, FaRegBookmark } from 'react-icons/fa'; // Added FaRegBookmark import
+import { FaHeart, FaComment, FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import '../src/assets/css/feed.css';
 
 const timeAgo = (date) => {
     const now = new Date();
     const seconds = Math.floor((now - new Date(date)) / 1000);
-    
-    const interval = Math.floor(seconds / 31536000); 
+
+    const interval = Math.floor(seconds / 31536000);
     if (interval > 1) return `${interval} years ago`;
-    
+
     const monthInterval = Math.floor(seconds / 2592000);
     if (monthInterval > 1) return `${monthInterval} months ago`;
-    
-    const dayInterval = Math.floor(seconds / 86400); 
+
+    const dayInterval = Math.floor(seconds / 86400);
     if (dayInterval > 1) return `${dayInterval} days ago`;
-    
-    const hourInterval = Math.floor(seconds / 3600); 
+
+    const hourInterval = Math.floor(seconds / 3600);
     if (hourInterval > 1) return `${hourInterval} hours ago`;
-    if (hourInterval >= 1) return '1 hour ago'; 
-    
-    const minuteInterval = Math.floor(seconds / 60); 
+    if (hourInterval >= 1) return '1 hour ago';
+
+    const minuteInterval = Math.floor(seconds / 60);
     if (minuteInterval > 1) return `${minuteInterval} mins ago`;
-    
+
     return `${Math.floor(seconds)} seconds ago`;
 };
 
@@ -44,11 +44,11 @@ const Feed = () => {
                 });
                 const sortedContents = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setContents(sortedContents);
-    
+
                 // Initialize likedPosts from fetched data
                 const liked = new Set(sortedContents.filter(post => post.isLiked).map(post => post._id));
                 setLikedPosts(liked);
-    
+
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching data:', error.response?.data || error.message);
@@ -56,7 +56,7 @@ const Feed = () => {
                 setLoading(false);
             }
         };
-    
+
         const fetchBookmarkedPosts = async () => {
             try {
                 const response = await axios.get('http://localhost:8000/api/content/bookmarked', {
@@ -68,18 +68,18 @@ const Feed = () => {
                 console.error('Error fetching bookmarked posts:', error.response?.data || error.message);
             }
         };
-    
+
         fetchContents();
         fetchBookmarkedPosts();
     }, []);
-    
+
     const handleLike = async (postId) => {
         try {
             const response = await axios.post(`http://localhost:8000/api/content/like/${postId}`, {}, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             if (response.status === 200) {
-                const updatedLikesCount = response.data.likes;
+                const updatedLikesCount = response.data.likesCount;
                 setContents(prevContents =>
                     prevContents.map(content =>
                         content._id === postId ? { ...content, likesCount: updatedLikesCount } : content
@@ -112,7 +112,6 @@ const Feed = () => {
             console.error('Error bookmarking post:', error.response?.data || error.message);
         }
     };
-    
 
     const fetchComments = async (postId) => {
         try {
@@ -212,6 +211,11 @@ const Feed = () => {
                                     />
                                 )}
                             </div>
+                            {content.likesCount > 0 && (
+                                <div className="feed-item-likes-count">
+                                    {content.likesCount} {content.likesCount === 1 ? 'like' : 'likes'}
+                                </div>
+                            )}
                             <div className="feed-item-divider"></div>
                         </div>
                     );

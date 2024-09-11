@@ -68,7 +68,8 @@ export const getNewsfeed = async (req, res) => {
             return {
                 ...content,
                 isLiked,
-                isBookmarked
+                isBookmarked,
+                likesCount: content.likes.length
             };
         });
 
@@ -80,6 +81,7 @@ export const getNewsfeed = async (req, res) => {
 };
 
 
+// function for like post
 // function for like post
 export const likePost = async (req, res) => {
     const userId = req.user._id;
@@ -108,7 +110,7 @@ export const likePost = async (req, res) => {
 
         await post.save();
 
-        res.status(200).json({ message: 'Post liked/unliked successfully', likes: post.likes.length });
+        res.status(200).json({ message: 'Post liked/unliked successfully', likesCount: post.likes.length });
     } catch (error) {
         console.error('Error liking post:', error);
         res.status(500).json({ message: 'Server error' });

@@ -5,9 +5,15 @@
     gap: 20px;
     width: 500px;
     margin: 0 auto;
+    text-align: center;
 }
 
+.saved-posts-container p{
+    font-size: 1rem;
+    margin-top: 100px;
+}
 .saved-post-item {
+    position: relative; 
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
@@ -15,9 +21,10 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+
 .saved-post-user-info {
     display: flex;
-    align-items: flex-start; /* Align items at the start */
+    align-items: flex-start; 
     padding: 10px;
 }
 
@@ -63,11 +70,12 @@
 }
 
 .unsave-post-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     background: transparent;
     border: none;
     cursor: pointer;
-    color: red;
-    font-size: 1.5rem;
-    margin-left: auto;
+    color: gray; 
+    font-size: 0.8rem; 
 }
-

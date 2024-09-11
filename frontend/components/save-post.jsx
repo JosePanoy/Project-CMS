@@ -77,6 +77,12 @@ const SavePost = () => {
                 ) : (
                     savedPosts.map(post => (
                         <div key={post._id} className="saved-post-item">
+                            <button 
+                                className="unsave-post-button" 
+                                onClick={() => handleUnsave(post._id)}
+                            >
+                                <FaTrash />
+                            </button>
                             <div className="saved-post-user-info">
                                 <img
                                     src={`http://localhost:8000/profilepic/${post.userDetails.profilePic || 'default-profile-pic.jpg'}`}
@@ -104,12 +110,6 @@ const SavePost = () => {
                                     />
                                 )}
                             </div>
-                            <button 
-                                className="unsave-post-button" 
-                                onClick={() => handleUnsave(post._id)}
-                            >
-                                <FaTrash />
-                            </button>
                         </div>
                     ))
                 )}
