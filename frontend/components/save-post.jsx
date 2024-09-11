@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { FaTrash } from "react-icons/fa"; // Import the delete icon
 import '../src/assets/css/save-post.css';
 import DashboardSidebar from "./dashboard-main-navbar";
 
@@ -26,26 +27,40 @@ const SavePost = () => {
         fetchSavedPosts();
     }, []);
 
+    const handleUnsave = async (postId) => {
+        if (window.confirm('Are you sure you want to unsave this post?')) {
+            try {
+                await axios.post(`http://localhost:8000/api/content/bookmark/${postId}`, {}, {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                });
+                setSavedPosts(savedPosts.filter(post => post._id !== postId));
+            } catch (error) {
+                console.error('Error removing saved post:', error.response?.data || error.message);
+                setError('Failed to remove saved post');
+            }
+        }
+    };
+
     const timeAgo = (date) => {
         const now = new Date();
         const seconds = Math.floor((now - new Date(date)) / 1000);
-        
+
         const interval = Math.floor(seconds / 31536000); 
         if (interval > 1) return `${interval} years ago`;
-        
+
         const monthInterval = Math.floor(seconds / 2592000);
         if (monthInterval > 1) return `${monthInterval} months ago`;
-        
+
         const dayInterval = Math.floor(seconds / 86400); 
         if (dayInterval > 1) return `${dayInterval} days ago`;
-        
+
         const hourInterval = Math.floor(seconds / 3600); 
         if (hourInterval > 1) return `${hourInterval} hours ago`;
         if (hourInterval >= 1) return '1 hour ago'; 
-        
+
         const minuteInterval = Math.floor(seconds / 60); 
         if (minuteInterval > 1) return `${minuteInterval} mins ago`;
-        
+
         return `${Math.floor(seconds)} seconds ago`;
     };
 
@@ -89,6 +104,12 @@ const SavePost = () => {
                                     />
                                 )}
                             </div>
+                            <button 
+                                className="unsave-post-button" 
+                                onClick={() => handleUnsave(post._id)}
+                            >
+                                <FaTrash />
+                            </button>
                         </div>
                     ))
                 )}
