@@ -43,6 +43,7 @@
 
 .feed-item-caption {
     margin-bottom: 10px;
+    font-size: 0.8rem;
 }
 
 .feed-item-content-image,
@@ -292,9 +293,9 @@
 }
 
 .feed-item-likes-count{
-    font-size: 0.7rem;
-    margin-top: 5px;
-    margin-top: 5px;
+    font-size: 0.5rem;
+    margin-top: 10px;
+    color: hsl(0, 0%, 15%);
 }
 
 
@@ -305,7 +306,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.405);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -314,7 +315,7 @@
 
 .feed-likes-modal-content {
     background: white;
-    border-radius: 8px;
+    border-radius: 12px;
     width: 90%;
     max-width: 600px;
     max-height: 80vh; 
@@ -335,12 +336,12 @@
 .feed-likes-modal-close {
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 15px;
     background: transparent;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #888;
+    color: #494949;
 }
 
 .feed-likes-list {

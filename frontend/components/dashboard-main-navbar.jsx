@@ -74,7 +74,7 @@ function DashboardSidebar({ user, onContentUpload }) {
   return (
     <div className="dashboard-sidebar">
       <Link style={{ textDecoration: 'none' }} to="/dashboard">
-        <h2>Panoy Socials</h2>
+        <h2 style={{cursor: 'pointer'}}>Panoy Socials</h2>
       </Link>
       <div className="dashboard-sidebar-content">
         <button className="dashboard-sidebar-btn" onClick={() => navigate('/dashboard')}>

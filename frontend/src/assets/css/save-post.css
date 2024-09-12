@@ -5,12 +5,12 @@
     gap: 20px;
     width: 500px;
     margin: 0 auto;
-    text-align: center;
+    text-align: left;
 }
 
 .saved-posts-container p{
     font-size: 1rem;
-    margin-top: 100px;
+    margin-top: -10px;
 }
 .saved-post-item {
     position: relative; 
@@ -38,17 +38,19 @@
 .saved-post-user-details {
     margin-left: 10px;
     display: flex;
-    flex-direction: column; /* Stack user details vertically */
+    flex-direction: column; 
 }
 
 .saved-post-user-name {
     font-weight: bold;
+    cursor: default;
 }
 
 .saved-post-post-date {
     font-size: 0.8em;
     color: #666;
-    margin-top: 5px; /* Space between the name and date */
+    margin-top: 5px; 
+    cursor: default;
 }
 
 .saved-post-content-body {
@@ -78,4 +80,8 @@
     cursor: pointer;
     color: gray; 
     font-size: 0.8rem; 
+}
+
+.unsave-post-button :hover {
+    color: red;
 }

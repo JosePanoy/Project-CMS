@@ -73,7 +73,7 @@ const SavePost = () => {
             <h3 className="saved-posts-header" style={{ marginTop: '50px' }}>Saved Posts</h3>
             <div className="saved-posts-container">
                 {savedPosts.length === 0 ? (
-                    <p>No saved posts available</p>
+                    <p style={{textAlign: 'center'}}>No saved posts available</p>
                 ) : (
                     savedPosts.map(post => (
                         <div key={post._id} className="saved-post-item">
@@ -95,7 +95,7 @@ const SavePost = () => {
                                 </div>
                             </div>
                             <div className="saved-post-content-body">
-                                {post.caption && <p className="saved-post-caption">{post.caption}</p>}
+                                {post.caption && <p className="saved-post-caption" style={{fontSize: '0.8rem'}}>{post.caption}</p>}
                                 {post.fileName && post.fileName.endsWith('.mp4') ? (
                                     <video
                                         src={`http://localhost:8000/usersUpload/${post.fileName}`}

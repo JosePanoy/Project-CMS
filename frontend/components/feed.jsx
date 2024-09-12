@@ -4,29 +4,6 @@ import axios from 'axios';
 import { FaHeart, FaComment, FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import '../src/assets/css/feed.css';
 
-const timeAgo = (date) => {
-    const now = new Date();
-    const seconds = Math.floor((now - new Date(date)) / 1000);
-
-    const interval = Math.floor(seconds / 31536000);
-    if (interval > 1) return `${interval} years ago`;
-
-    const monthInterval = Math.floor(seconds / 2592000);
-    if (monthInterval > 1) return `${monthInterval} months ago`;
-
-    const dayInterval = Math.floor(seconds / 86400);
-    if (dayInterval > 1) return `${dayInterval} days ago`;
-
-    const hourInterval = Math.floor(seconds / 3600);
-    if (hourInterval > 1) return `${hourInterval} hours ago`;
-    if (hourInterval >= 1) return '1 hour ago';
-
-    const minuteInterval = Math.floor(seconds / 60);
-    if (minuteInterval > 1) return `${minuteInterval} mins ago`;
-
-    return `${Math.floor(seconds)} seconds ago`;
-};
-
 const Feed = () => {
     const [contents, setContents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -100,6 +77,37 @@ const Feed = () => {
         }
     };
 
+    
+    // convert time posted
+
+    const timeAgo = (date) => {
+        const now = new Date();
+        const seconds = Math.floor((now - new Date(date)) / 1000);
+
+        // for year conversion
+        const yearInterval = Math.floor(seconds / 31536000);
+        if(yearInterval >= 1) return `${yearInterval}y`;
+
+        // for day/week conversions
+        const dayInterval = Math.floor(seconds / 86400);
+        if(dayInterval > 7 ){
+            const weekInterval = Math.floor(dayInterval / 7);
+            return `${weekInterval}w`;
+        } else if (dayInterval > 0 ) {
+            return `${dayInterval}d`;
+        }
+
+        const hourInterval = Math.floor(seconds / 3600);
+        if (hourInterval >= 1) return `${hourInterval}h`;
+
+        const minuteInterval = Math.floor(seconds / 60);
+        if (minuteInterval >=1 ) return `${minuteInterval}m`;
+
+        return `${Math.floor(seconds)}s`;
+    };
+
+
+    // get bookmarks
     const handleBookmark = async (postId) => {
         try {
             await axios.post(`http://localhost:8000/api/content/bookmark/${postId}`, {}, {
@@ -177,6 +185,7 @@ const Feed = () => {
                     const user = content.userDetails || {};
                     const profilePic = user.profilePic || 'default-profile-pic.jpg';
                     const userName = user.name || 'Unknown User';
+                    const userNickName = user.nickName || 'Unknown Nickname'
 
                     return (
                         <div key={content._id} className="feed-item-container">
@@ -187,16 +196,19 @@ const Feed = () => {
                                     className="feed-item-user-profile-pic"
                                 />
                                 <div className="feed-item-user-details">
-                                    <span className="feed-item-user-name">{userName}</span>
-                                    <span className="feed-item-post-date">{timeAgo(content.createdAt)}</span>
+                                <span className="feed-item-user-name">
+                                    {userName}
+                                    <span style={{ margin: '0 0.3rem', color: 'gray', fontSize: '0.8rem' }}>•</span>
+                                    <span style={{ fontSize: '0.7rem', color: 'gray' }}>{timeAgo(content.createdAt)}</span>
+                                </span>
                                 </div>
                             </div>
                             <div className="feed-item-content-body">
-                                {content.caption && <p className="feed-item-caption">{content.caption}</p>}
                                 {isVideo ? (
                                     <video
                                         src={`http://localhost:8000/usersUpload/${content.fileName}`}
                                         controls
+                                        autoPlay
                                         className="feed-item-content-media"
                                     />
                                 ) : (
@@ -235,6 +247,11 @@ const Feed = () => {
                                         {content.likesCount} {content.likesCount === 1 ? 'like' : 'likes'}
                                     </>
                                 )}
+                                    {content.caption && (
+                                        <p className="feed-item-caption">
+                                            @<span style={{ fontWeight: 600, cursor: 'pointer' }}>{userNickName}</span>  {content.caption}
+                                        </p>
+                                    )}
                             </div>
                             <div className="feed-item-divider"></div>
                         </div>
@@ -279,6 +296,7 @@ const Feed = () => {
                                     <video
                                         src={`http://localhost:8000/usersUpload/${selectedPost.fileName}`}
                                         controls
+                                        autoPlay
                                         className="feed-modal-image"
                                     />
                                 ) : (
