@@ -83,7 +83,7 @@ export const getNewsfeed = async (req, res) => {
 
 // function for like post
 export const likePost = async (req, res) => {
-    const userId = req.user._id;
+    const userId = req.user._id; // Assuming user ID is in req.user._id
     const { postId } = req.params;
 
     if (!userId) {
@@ -96,21 +96,25 @@ export const likePost = async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        post.likes = post.likes.filter(id => id);
+        // Ensure no duplicate likes
+        post.likes = post.likes.filter(id => id); // Remove any potential invalid IDs
         const hasLiked = post.likes.includes(userId);
 
         if (hasLiked) {
-            post.likes = post.likes.filter(id => id !== userId);
+            // Remove like
+            post.likes = post.likes.filter(id => id.toString() !== userId.toString());
         } else {
+            // Add like
             post.likes.push(userId);
-            // Create notification
+            // Create notification for the post owner
             const postOwner = await User.findById(post.userId);
             if (postOwner) {
                 await Notification.create({
                     userId: postOwner._id,
                     type: 'like',
                     postId,
-                    message: `${req.user.name} liked your post`
+                    message: `${req.user.name} liked your post`,
+                    interactingUserId: userId // Save the ID of the user who liked the post
                 });
             }
         }
@@ -127,7 +131,7 @@ export const likePost = async (req, res) => {
 export const postComment = async (req, res) => {
     const { postId } = req.params;
     const { text } = req.body;
-    const userId = req.user.id;
+    const userId = req.user._id; // Assuming user ID is in req.user._id
 
     if (!text) {
         return res.status(400).json({ message: 'Comment text is required' });
@@ -139,20 +143,22 @@ export const postComment = async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
 
+        // Add the comment
         post.comments.push({
             author: userId,
             text,
             timestamp: new Date()
         });
 
-        // Create notification
+        // Create notification for the post owner
         const postOwner = await User.findById(post.userId);
         if (postOwner) {
             await Notification.create({
                 userId: postOwner._id,
                 type: 'comment',
                 postId,
-                message: `${req.user.name} commented on your post`
+                message: `${req.user.name} on your post`,
+                interactingUserId: userId // Save the ID of the user who commented
             });
         }
 
@@ -293,13 +299,25 @@ export const getLikes = async (req, res) => {
 /// for notification 
 export const getNotifications = async (req, res) => {
     try {
-        const notifications = await Notification.find({ userId: req.user.id })
-            .populate({
-                path: 'userId', 
-                select: 'profilePic name'
-            })
-            .sort({ timestamp: -1 });
-        res.json(notifications);
+        const notifications = await Notification.find({ userId: req.user.id }).sort({ timestamp: -1 });
+
+        // Fetch user details of the users who created these notifications
+        const interactingUserIds = [...new Set(notifications.map(n => n.interactingUserId))];
+        const users = await User.find({ _id: { $in: interactingUserIds } }).select('profilePic name');
+
+        // Create a map of userId to user details
+        const userMap = users.reduce((acc, user) => {
+            acc[user._id] = user;
+            return acc;
+        }, {});
+
+        // Attach user details to notifications
+        const notificationsWithUserDetails = notifications.map(notification => ({
+            ...notification._doc,
+            interactingUserDetails: userMap[notification.interactingUserId]  // Add user details to each notification
+        }));
+
+        res.json(notificationsWithUserDetails);
     } catch (error) {
         console.error('Error fetching notifications:', error);
         res.status(500).json({ message: 'Server error' });
