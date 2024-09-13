@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use(cors({
     origin: 'http://localhost:5173',
-    methods: 'GET,POST,PUT,DELETE',
+    methods: 'GET,POST,PUT,DELETE', 
     allowedHeaders: 'Content-Type, Authorization',
 }));
 

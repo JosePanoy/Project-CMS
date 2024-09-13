@@ -1,5 +1,6 @@
 // content.controller.js
 import Content from '../models/content.model.js';
+import Notification from '../models/notification.model.js';
 import User from '../models/user.model.js';
 
 
@@ -91,30 +92,36 @@ export const likePost = async (req, res) => {
 
     try {
         const post = await Content.findById(postId);
-
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
 
         post.likes = post.likes.filter(id => id);
-
         const hasLiked = post.likes.includes(userId);
 
         if (hasLiked) {
             post.likes = post.likes.filter(id => id !== userId);
         } else {
             post.likes.push(userId);
+            // Create notification
+            const postOwner = await User.findById(post.userId);
+            if (postOwner) {
+                await Notification.create({
+                    userId: postOwner._id,
+                    type: 'like',
+                    postId,
+                    message: `${req.user.name} liked your post`
+                });
+            }
         }
 
         await post.save();
-
         res.status(200).json({ message: 'Post liked/unliked successfully', likesCount: post.likes.length });
     } catch (error) {
         console.error('Error liking post:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };
-
 
 // function for commenting in post
 export const postComment = async (req, res) => {
@@ -128,7 +135,6 @@ export const postComment = async (req, res) => {
 
     try {
         const post = await Content.findById(postId);
-
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
@@ -139,8 +145,18 @@ export const postComment = async (req, res) => {
             timestamp: new Date()
         });
 
-        await post.save();
+        // Create notification
+        const postOwner = await User.findById(post.userId);
+        if (postOwner) {
+            await Notification.create({
+                userId: postOwner._id,
+                type: 'comment',
+                postId,
+                message: `${req.user.name} commented on your post`
+            });
+        }
 
+        await post.save();
         res.status(201).json({ message: 'Comment added successfully', comments: post.comments });
     } catch (error) {
         console.error('Error posting comment:', error);
@@ -269,6 +285,23 @@ export const getLikes = async (req, res) => {
         res.json(post.likes);
     } catch (error) {
         console.error('Error fetching likes:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
+/// for notification 
+export const getNotifications = async (req, res) => {
+    try {
+        const notifications = await Notification.find({ userId: req.user.id })
+            .populate({
+                path: 'userId', 
+                select: 'profilePic name'
+            })
+            .sort({ timestamp: -1 });
+        res.json(notifications);
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };
