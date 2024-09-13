@@ -29,12 +29,13 @@ function Notification() {
                 {notifications.map((notification) => (
                     <div key={notification._id} className="notification-item">
                         <img 
-                            src={`http://localhost:8000/profilepic/${notification.userId?.profilePic}`} 
+                            src={`http://localhost:8000/profilepic/${notification.userProfilePic}`} 
                             alt="User Avatar" 
                             className="notification-avatar" 
                         />
                         <div className="notification-text">
-                            <span>{notification.userId?.name}</span> {notification.message}
+                            <span className="notification-user-name">{notification.userName}</span> 
+                            {notification.message}
                         </div>
                     </div>
                 ))}
