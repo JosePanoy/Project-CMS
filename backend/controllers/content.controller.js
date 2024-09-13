@@ -325,3 +325,27 @@ export const getNotifications = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+/// retrieve unread notifications
+export const getUnreadNotificationsCount = async (req, res) => {
+  try {
+      const count = await Notification.countDocuments({ userId: req.user.id, isRead: false });
+      res.json({ count });
+  } catch (error) {
+      console.error("Error fetching unread notifications count:", error);
+      res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// retrieve marked notification as read
+export const markNotificationsAsRead = async (req, res) => {
+  try {
+      await Notification.updateMany({ userId: req.user.id, isRead: false }, { $set: { isRead: true } });
+      res.status(200).json({ message: "Notifications marked as read" });
+  } catch (error) {
+      console.error("Error marking notifications as read:", error);
+      res.status(500).json({ message: "Server error" });
+  }
+};

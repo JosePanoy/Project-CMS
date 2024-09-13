@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaHome, FaSearch, FaEnvelope, FaBell, FaUser, FaSignOutAlt, FaUpload, FaBookmark } from 'react-icons/fa';
 import { useNavigate, Link } from 'react-router-dom';
 import '../src/assets/css/dashboard-main-sidebar.css';
 import loadingAnimation from '../src/assets/img/loading.gif';
+import axios from 'axios';
 
 function DashboardSidebar({ user, onContentUpload }) {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -10,6 +11,7 @@ function DashboardSidebar({ user, onContentUpload }) {
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
   const [caption, setCaption] = useState('');
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -60,7 +62,6 @@ function DashboardSidebar({ user, onContentUpload }) {
       setCaption('');
       closeUploadModal();
 
-      // Notify the parent component to refetch or update content
       if (onContentUpload) {
         onContentUpload();
       }
@@ -70,6 +71,21 @@ function DashboardSidebar({ user, onContentUpload }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/content/notifications/unread-count', {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            });
+            setUnreadCount(response.data.count);
+        } catch (error) {
+            console.error('Error fetching unread notifications count:', error);
+        }
+    };
+
+    fetchUnreadCount();
+  }, []);
 
   return (
     <div className="dashboard-sidebar">
@@ -95,9 +111,16 @@ function DashboardSidebar({ user, onContentUpload }) {
         </button>
 
         <Link to="/notification" className="dashboard-sidebar-btn">
-          <FaBell />
-          <span>Notifications</span>
-        </Link>
+        <FaBell />
+        {unreadCount > 0 && (
+          <span>
+            Notifications{' '}
+            <span style={{ color: 'red', fontWeight: '500', fontSize: '0.8rem', marginLeft: '-1px' }}>
+              {unreadCount}
+            </span>
+          </span>
+        )}
+      </Link>
 
         <Link to="/user-profile" className="dashboard-sidebar-btn dashboard-profile-btn">
           {user && user.profilePic ? (
