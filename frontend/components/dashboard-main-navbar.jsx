@@ -118,6 +118,7 @@ function DashboardSidebar({ user, onContentUpload }) {
             <span style={{ color: 'red', fontWeight: '500', fontSize: '0.8rem', marginLeft: '-1px' }}>
               {unreadCount}
             </span>
+            try
           </span>
         )}
       </Link>
