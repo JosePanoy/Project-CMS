@@ -136,6 +136,7 @@ a {
 
 .modal-content.logout-modal-content {
     max-width: 300px;
+    border-radius: 8px;
 }
 
 .modal-input {

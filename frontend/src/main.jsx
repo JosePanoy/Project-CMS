@@ -12,6 +12,7 @@ import Login from '../components/login';
 import DashbordMain from '../components/dashboard-main'; 
 import UserProfile from '../components/user-profile';
 import SavePost from '../components/save-post';
+import Notification from '../components/dash-notification';
 
 const root = createRoot(document.getElementById('root'));
 root.render(
@@ -25,6 +26,7 @@ root.render(
         <Route path="/dashboard" element={<DashbordMain />} /> 
         <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/savedpost" element={<SavePost />} />
+        <Route path="/notification" element={<Notification />}></Route>
       </Routes>
     </Router>
   </React.StrictMode>

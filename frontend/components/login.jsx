@@ -43,7 +43,7 @@ function Login() {
       setTimeout(() => {
         setLoading(false);
         navigate('/dashboard');
-      }, 3500); // 5 seconds delay
+      }, 3500); // 3.5 seconds delay
     } catch (error) {
       setLoading(false);
       const message = error.response?.data.message || 'Login failed';
@@ -52,22 +52,24 @@ function Login() {
   };
 
   return (
+
     <>
-      <Navbar />
+    <Navbar />
+
+    <div className="login-page">
       <div className="login-container">
-        <h2 className="login-title">Log In</h2>
+        <h2 className="login-title">Panoy Socials</h2>
         <form className="login-form" onSubmit={handleSubmit}>
-          <label htmlFor="email">Email</label>
           <input
-            type="text"
+            type="email"
             id="email"
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
             required
           />
 
-          <label htmlFor="password">Password</label>
           <div className="password-input-container">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -75,6 +77,7 @@ function Login() {
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
               required
               className="password-input"
             />
@@ -90,10 +93,10 @@ function Login() {
           <button type="submit" className="login-button">Log In</button>
         </form>
         {errorMessage && (
-          <p className="error-message" style={{ color: 'red', marginBottom: '-10px', fontSize: '0.8rem' }}>{errorMessage}</p>
+          <p className="error-message">{errorMessage}</p>
         )}
         <div className="signup-link">
-          <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
+          <p style={{fontSize: '0.8rem'}}>Don't have an account? <Link to="/signup" style={{textDecoration: 'none'}}>Sign Up</Link></p>
         </div>
       </div>
 
@@ -102,6 +105,8 @@ function Login() {
           <img src={loginAnimation} alt="Loading" />
         </div>
       )}
+    </div>
+
     </>
   );
 }

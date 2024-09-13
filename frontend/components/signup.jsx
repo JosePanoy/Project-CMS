@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
-import '../src/assets/css/signup.css'; // Make sure your CSS file is correct
+import '../src/assets/css/signup.css'; 
 import Navbar from './navbar';
-import loginAnimation from '../src/assets/img/loading.gif'; // Import the loading animation
+import loginAnimation from '../src/assets/img/loading.gif';
 
 function Signup() {
     const [formData, setFormData] = useState({
@@ -18,7 +18,7 @@ function Signup() {
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [loading, setLoading] = useState(false); // Add loading state
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -48,7 +48,7 @@ function Signup() {
         data.append('password', password);
         if (profilePic) data.append('profilePic', profilePic);
     
-        setLoading(true); // Show loading overlay
+        setLoading(true); 
         try {
             await axios.post('http://localhost:8000/api/users/register', data, {
                 headers: {
@@ -66,13 +66,13 @@ function Signup() {
                 profilePic: null
             });
             setTimeout(() => {
-                setLoading(false); // Hide loading overlay
+                setLoading(false); 
                 setSuccess('');
                 setError('');
                 navigate('/login');
             }, 3500);
         } catch (error) {
-            setLoading(false); // Hide loading overlay
+            setLoading(false); 
             setError('Failed to register. Please try again.');
             console.error(error);
         }
@@ -82,78 +82,83 @@ function Signup() {
         <>
         <Navbar />
         <div className="signup-container">
-            <h2>Sign Up</h2>
+            <h2 className="signup-title">Panoy Socials</h2>
             {success && <p className="success-message">{success}</p>}
             {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="name"><FaUser /> Name</label>
                     <input
                         type="text"
                         id="name"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
+                        placeholder="Name"
                         required
                     />
+                    <FaUser className="form-icon" />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="nickName"><FaUser /> Nickname</label>
                     <input
                         type="text"
                         id="nickName"
                         name="nickName"
                         value={formData.nickName}
                         onChange={handleChange}
+                        placeholder="Nickname"
                         required
                     />
+                    <FaUser className="form-icon" />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="addr"><FaMapMarkerAlt /> Address</label>
                     <input
                         type="text"
                         id="addr"
                         name="addr"
                         value={formData.addr}
                         onChange={handleChange}
+                        placeholder="Address"
                         required
                     />
+                    <FaMapMarkerAlt className="form-icon" />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="email"><FaEnvelope /> Email</label>
                     <input
                         type="email"
                         id="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
+                        placeholder="Email"
                         required
                     />
+                    <FaEnvelope className="form-icon" />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="contact"><FaPhone /> Contact</label>
                     <input
                         type="text"
                         id="contact"
                         name="contact"
                         value={formData.contact}
                         onChange={handleChange}
+                        placeholder="Contact"
                         required
                     />
+                    <FaPhone className="form-icon" />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="password"><FaLock /> Password</label>
                     <input
                         type="password"
                         id="password"
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
+                        placeholder="Password"
                         required
                     />
+                    <FaLock className="form-icon" />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="profilePic">Profile Picture</label>
                     <input
                         type="file"
                         id="profilePic"
@@ -161,8 +166,12 @@ function Signup() {
                         onChange={handleChange}
                     />
                 </div>
-                <button type="submit">Sign Up</button>
+                <button type="submit" className="signup-button">Sign Up</button>
             </form>
+            <p style={{ fontSize: '0.8rem', textAlign: 'center', marginTop: '15px' }}>
+                Already have an account? 
+                <Link to="/login" style={{ textDecoration: 'none', color: '#007bff', fontWeight: 'bold' }}> Log In</Link>
+            </p>
         </div>
         {loading && (
             <div className="loading-overlay">

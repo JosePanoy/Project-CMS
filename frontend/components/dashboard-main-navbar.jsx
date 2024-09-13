@@ -93,10 +93,12 @@ function DashboardSidebar({ user, onContentUpload }) {
           <FaEnvelope />
           <span>Messages</span>
         </button>
-        <button className="dashboard-sidebar-btn">
+
+        <Link to="/notification" className="dashboard-sidebar-btn">
           <FaBell />
           <span>Notifications</span>
-        </button>
+        </Link>
+
         <Link to="/user-profile" className="dashboard-sidebar-btn dashboard-profile-btn">
           {user && user.profilePic ? (
             <img
@@ -109,6 +111,7 @@ function DashboardSidebar({ user, onContentUpload }) {
           )}
           <span>Profile</span>
         </Link>
+
         <button className="dashboard-sidebar-btn dashboard-upload-btn" onClick={openUploadModal}>
           <FaUpload />
           <span>Create</span>

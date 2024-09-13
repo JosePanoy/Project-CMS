@@ -46,6 +46,8 @@
     font-size: 0.8rem;
 }
 
+
+
 .feed-item-content-image,
 .feed-item-content-media {
     max-width: 100%;
@@ -54,24 +56,53 @@
 
 .feed-item-actions {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     margin-top: 10px;
 }
 
-.feed-item-heart-icon {
-    margin-right: 10px;
-    color: black;
+.feed-item-actions .feed-item-icon {
+    width: 20px;
+    height: 20px;
     cursor: pointer;
+    margin: 0 5px;
 }
 
-.feed-item-heart-icon.liked {
-    color: red;
+.feed-item-actions .feed-item-icon:first-child {
+    margin-left: 0;
 }
 
-.feed-item-comment-icon {
-    margin-left: 10px;
-    margin-right: 10px;
+.feed-item-actions .feed-item-icon:last-child {
+    margin-left: auto; 
 }
+
+
+.feed-item-actions img {
+    margin: 0 5px; 
+}
+
+.feed-item-icon {
+    width: 20px; 
+    height: 20px;
+    margin: 0 5px; 
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.feed-item-icon:hover {
+    transform: scale(1.1); 
+}
+
+
+.feed-item-icon.liked {
+    filter: brightness(0) saturate(100%) invert(35%) sepia(100%) saturate(7481%) hue-rotate(355deg) brightness(94%) contrast(91%);
+}
+
+.feed-item-icon.bookmarked {
+    filter: brightness(0) saturate(100%) invert(57%) sepia(100%) saturate(361%) hue-rotate(25deg) brightness(99%) contrast(102%);
+}
+
+
 
 .feed-item-divider {
     border-top: 1px solid #ddd;

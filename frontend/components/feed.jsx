@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaHeart, FaComment, FaBookmark, FaRegBookmark } from 'react-icons/fa';
 import '../src/assets/css/feed.css';
+import heartIcon from '../src/assets/img/heart.png';
+import commentIcon from '../src/assets/img/comment.png';
+import saveIcon from '../src/assets/img/save.png';
 
 const Feed = () => {
     const [contents, setContents] = useState([]);
@@ -220,27 +223,26 @@ const Feed = () => {
                                 )}
                             </div>
                             <div className="feed-item-actions">
-                                <FaHeart
+                                <img
+                                    src={heartIcon}
+                                    alt="Like"
                                     onClick={() => handleLike(content._id)}
-                                    style={{ color: likedPosts.has(content._id) ? 'red' : 'black', cursor: 'pointer' }}
+                                    className={`feed-item-icon ${likedPosts.has(content._id) ? 'liked' : ''}`}
                                 />
-                                <FaComment
+                                <img
+                                    src={commentIcon}
+                                    alt="Comment"
                                     onClick={() => handleCommentClick(content)}
-                                    className="feed-item-comment-icon"
-                                    style={{ cursor: 'pointer' }}
+                                    className="feed-item-icon"
                                 />
-                                {bookmarkedPosts.has(content._id) ? (
-                                    <FaBookmark
-                                        onClick={() => handleBookmark(content._id)}
-                                        style={{ color: 'yellow', cursor: 'pointer' }}
-                                    />
-                                ) : (
-                                    <FaRegBookmark
-                                        onClick={() => handleBookmark(content._id)}
-                                        style={{ color: 'black', cursor: 'pointer' }}
-                                    />
-                                )}
+                                <img
+                                    src={saveIcon}
+                                    alt="Bookmark"
+                                    onClick={() => handleBookmark(content._id)}
+                                    className={`feed-item-icon ${bookmarkedPosts.has(content._id) ? 'bookmarked' : ''}`}
+                                />
                             </div>
+
                             <div className="feed-item-likes-count" style={{ cursor: 'pointer' }} onClick={() => handleShowLikesModal(content._id)}>
                                 {content.likesCount > 0 && (
                                     <>
