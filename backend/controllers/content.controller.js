@@ -297,31 +297,26 @@ export const getNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find({ userId: req.user.id }).sort({ timestamp: -1 });
 
-    // Fetch user details of the users who created these notifications
     const interactingUserIds = [...new Set(notifications.map((n) => n.interactingUserId))];
     const users = await User.find({ _id: { $in: interactingUserIds } }).select("profilePic name");
 
-    // Fetch content details related to the notifications
     const contentIds = [...new Set(notifications.map((n) => n.postId))];
     const contents = await Content.find({ _id: { $in: contentIds } }).select("fileName");
 
-    // Create a map of contentId to content details
     const contentMap = contents.reduce((acc, content) => {
       acc[content._id] = content;
       return acc;
     }, {});
 
-    // Create a map of userId to user details
     const userMap = users.reduce((acc, user) => {
       acc[user._id] = user;
       return acc;
     }, {});
 
-    // Attach user details and content details to notifications
     const notificationsWithDetails = notifications.map((notification) => ({
       ...notification._doc,
       interactingUserDetails: userMap[notification.interactingUserId],
-      contentDetails: contentMap[notification.postId] // Add content details to each notification
+      contentDetails: contentMap[notification.postId] 
     }));
 
     res.json(notificationsWithDetails);
