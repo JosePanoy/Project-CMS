@@ -295,6 +295,8 @@ export const getLikes = async (req, res) => {
 /// for notification
 export const getNotifications = async (req, res) => {
   try {
+    await Notification.updateMany({ userId: req.user.id, isRead: false }, { $set: { isRead: true } });
+    
     const notifications = await Notification.find({ userId: req.user.id }).sort({ timestamp: -1 });
 
     const interactingUserIds = [...new Set(notifications.map((n) => n.interactingUserId))];

@@ -114,19 +114,11 @@ function DashboardSidebar({ user, onContentUpload }) {
         <FaBell />
         <span>Notifications </span>
         {unreadCount > 0 && (
-          <span 
-            style={{ 
-              color: 'red', 
-              marginLeft: '4px' 
-            }}
-          >
+          <span className="notification-badge">
             {unreadCount}
           </span>
         )}
       </Link>
-
-
-
         <Link to="/user-profile" className="dashboard-sidebar-btn dashboard-profile-btn">
           {user && user.profilePic ? (
             <img
