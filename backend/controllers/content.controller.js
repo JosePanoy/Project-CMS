@@ -295,17 +295,21 @@ export const getLikes = async (req, res) => {
 /// for notification
 export const getNotifications = async (req, res) => {
   try {
-    const notifications = await Notification.find({ userId: req.user.id }).sort(
-      { timestamp: -1 }
-    );
+    const notifications = await Notification.find({ userId: req.user.id }).sort({ timestamp: -1 });
 
     // Fetch user details of the users who created these notifications
-    const interactingUserIds = [
-      ...new Set(notifications.map((n) => n.interactingUserId)),
-    ];
-    const users = await User.find({ _id: { $in: interactingUserIds } }).select(
-      "profilePic name"
-    );
+    const interactingUserIds = [...new Set(notifications.map((n) => n.interactingUserId))];
+    const users = await User.find({ _id: { $in: interactingUserIds } }).select("profilePic name");
+
+    // Fetch content details related to the notifications
+    const contentIds = [...new Set(notifications.map((n) => n.postId))];
+    const contents = await Content.find({ _id: { $in: contentIds } }).select("fileName");
+
+    // Create a map of contentId to content details
+    const contentMap = contents.reduce((acc, content) => {
+      acc[content._id] = content;
+      return acc;
+    }, {});
 
     // Create a map of userId to user details
     const userMap = users.reduce((acc, user) => {
@@ -313,13 +317,14 @@ export const getNotifications = async (req, res) => {
       return acc;
     }, {});
 
-    // Attach user details to notifications
-    const notificationsWithUserDetails = notifications.map((notification) => ({
+    // Attach user details and content details to notifications
+    const notificationsWithDetails = notifications.map((notification) => ({
       ...notification._doc,
-      interactingUserDetails: userMap[notification.interactingUserId], // Add user details to each notification
+      interactingUserDetails: userMap[notification.interactingUserId],
+      contentDetails: contentMap[notification.postId] // Add content details to each notification
     }));
 
-    res.json(notificationsWithUserDetails);
+    res.json(notificationsWithDetails);
   } catch (error) {
     console.error("Error fetching notifications:", error);
     res.status(500).json({ message: "Server error" });
