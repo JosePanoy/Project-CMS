@@ -74,14 +74,14 @@ function DashboardSidebar({ user, onContentUpload }) {
 
   useEffect(() => {
     const fetchUnreadCount = async () => {
-        try {
-            const response = await axios.get('http://localhost:8000/api/content/notifications/unread-count', {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
-            setUnreadCount(response.data.count);
-        } catch (error) {
-            console.error('Error fetching unread notifications count:', error);
-        }
+      try {
+        const response = await axios.get('http://localhost:8000/api/content/notifications/unread-count', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        setUnreadCount(response.data.count);
+      } catch (error) {
+        console.error('Error fetching unread notifications count:', error);
+      }
     };
 
     fetchUnreadCount();
@@ -90,7 +90,7 @@ function DashboardSidebar({ user, onContentUpload }) {
   return (
     <div className="dashboard-sidebar">
       <Link style={{ textDecoration: 'none' }} to="/dashboard">
-        <h2 style={{cursor: 'pointer'}}>Panoy Socials</h2>
+        <h2 style={{ cursor: 'pointer' }}>Panoy Socials</h2>
       </Link>
       <div className="dashboard-sidebar-content">
         <button className="dashboard-sidebar-btn" onClick={() => navigate('/dashboard')}>
@@ -112,16 +112,20 @@ function DashboardSidebar({ user, onContentUpload }) {
 
         <Link to="/notification" className="dashboard-sidebar-btn">
         <FaBell />
+        <span>Notifications </span>
         {unreadCount > 0 && (
-          <span>
-            Notifications{' '}
-            <span style={{ color: 'red', fontWeight: '500', fontSize: '0.8rem', marginLeft: '-1px' }}>
-              {unreadCount}
-            </span>
-            try
+          <span 
+            style={{ 
+              color: 'red', 
+              marginLeft: '4px' 
+            }}
+          >
+            {unreadCount}
           </span>
         )}
       </Link>
+
+
 
         <Link to="/user-profile" className="dashboard-sidebar-btn dashboard-profile-btn">
           {user && user.profilePic ? (
