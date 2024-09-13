@@ -72,11 +72,20 @@ function Notification() {
                                 </div>
                                 {notification.contentDetails && (
                                     <div className="notification-thumbnail">
-                                        <img
-                                            src={`http://localhost:8000/usersUpload/${notification.contentDetails.fileName}`}
-                                            alt="Content Thumbnail"
-                                            className="thumbnail-image"
-                                        />
+                                        {notification.contentDetails.fileName.endsWith('.mp4') ? (
+                                            <video
+                                                className="thumbnail-video"
+                                                src={`http://localhost:8000/usersUpload/${notification.contentDetails.fileName}`}
+                                                controls
+                                                alt="Content Thumbnail"
+                                            />
+                                        ) : (
+                                            <img
+                                                src={`http://localhost:8000/usersUpload/${notification.contentDetails.fileName}`}
+                                                alt="Content Thumbnail"
+                                                className="thumbnail-image"
+                                            />
+                                        )}
                                     </div>
                                 )}
                             </div>
