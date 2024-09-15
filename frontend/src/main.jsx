@@ -28,8 +28,8 @@ root.render(
         <Route path="/dashboard" element={<DashbordMain />} /> 
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/savedpost" element={<SavePost />} />
-        <Route path="/notification" element={<Notification />} />
-        <Route path="/user/:id" element={<Profile />} />
+        <Route path="/notification" element={<Notification />}></Route>
+        <Route path="/user" element={Profile}></Route>
       </Routes>
     </Router>
   </React.StrictMode>

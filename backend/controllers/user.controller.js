@@ -105,16 +105,13 @@ export const getUserProfile = async (req, res) => {
     const { id } = req.params;
 
     try {
-        // Validate UUID format
         if (!id || !id.match(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)) {
             return res.status(400).json({ message: 'Invalid user ID' });
         }
 
-        // Find user by UUID
         const user = await User.findById(id);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        // Fetch user's contents
         const contents = await Content.find({ userId: id });
 
         res.json({
@@ -123,7 +120,7 @@ export const getUserProfile = async (req, res) => {
             profilePic: user.profilePic,
             contents: contents.map(content => ({
                 caption: content.caption,
-                filePath: content.filePath,
+                fileName: content.fileName, 
                 createdAt: content.createdAt
             }))
         });
