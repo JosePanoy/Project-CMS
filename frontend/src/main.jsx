@@ -24,7 +24,7 @@ root.render(
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<DashbordMain />} /> 
-        <Route path="/user-profile" element={<UserProfile />} />
+        <Route path="/profile" element={<UserProfile />} />
         <Route path="/savedpost" element={<SavePost />} />
         <Route path="/notification" element={<Notification />}></Route>
       </Routes>

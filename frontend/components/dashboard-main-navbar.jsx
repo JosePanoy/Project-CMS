@@ -119,7 +119,7 @@ function DashboardSidebar({ user, onContentUpload }) {
           </span>
         )}
       </Link>
-        <Link to="/user-profile" className="dashboard-sidebar-btn dashboard-profile-btn">
+        <Link to="/profile" className="dashboard-sidebar-btn dashboard-profile-btn">
           {user && user.profilePic ? (
             <img
               src={`http://localhost:8000/profilepic/${user.profilePic}`}
