@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use(cors({
     origin: 'http://localhost:5173',
-    methods: 'GET,POST,PUT,DELETE', 
+    methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
 }));
 
@@ -27,11 +27,13 @@ app.use('/api/content', contentRoutes);
 app.use('/profilepic', express.static(path.join(__dirname, 'profilepic')));
 app.use('/usersUpload', express.static(path.join(__dirname, 'usersUpload')));
 
+// Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something went wrong!');
 });
 
+// Start server
 const PORT = process.env.PORT || 8000;
 const MONGOURL = process.env.MONGOURL;
 

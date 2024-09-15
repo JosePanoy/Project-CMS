@@ -1,5 +1,6 @@
 // user.controller.js
 import User from '../models/user.model.js';
+import Content from '../models/content.model.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
@@ -95,6 +96,39 @@ export const getUserById = async (req, res) => {
         }
         res.json(user);
     } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+
+export const getUserProfile = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Validate UUID format
+        if (!id || !id.match(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
+
+        // Find user by UUID
+        const user = await User.findById(id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        // Fetch user's contents
+        const contents = await Content.find({ userId: id });
+
+        res.json({
+            name: user.name,
+            nickName: user.nickName,
+            profilePic: user.profilePic,
+            contents: contents.map(content => ({
+                caption: content.caption,
+                filePath: content.filePath,
+                createdAt: content.createdAt
+            }))
+        });
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };

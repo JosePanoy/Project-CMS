@@ -1,13 +1,15 @@
-// content.controller.js
+// components/feed.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaHeart, FaComment, FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import { FaHeart, FaComment, FaBookmark } from 'react-icons/fa';
+import { useNavigate, Link } from 'react-router-dom';
 import '../src/assets/css/feed.css';
 import heartIcon from '../src/assets/img/heart.png';
 import commentIcon from '../src/assets/img/comment.png';
 import saveIcon from '../src/assets/img/save.png';
 
 const Feed = () => {
+    const navigate = useNavigate();
     const [contents, setContents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -80,23 +82,18 @@ const Feed = () => {
         }
     };
 
-    
-    // convert time posted
-
     const timeAgo = (date) => {
         const now = new Date();
         const seconds = Math.floor((now - new Date(date)) / 1000);
 
-        // for year conversion
         const yearInterval = Math.floor(seconds / 31536000);
-        if(yearInterval >= 1) return `${yearInterval}y`;
+        if (yearInterval >= 1) return `${yearInterval}y`;
 
-        // for day/week conversions
         const dayInterval = Math.floor(seconds / 86400);
-        if(dayInterval > 7 ){
+        if (dayInterval > 7) {
             const weekInterval = Math.floor(dayInterval / 7);
             return `${weekInterval}w`;
-        } else if (dayInterval > 0 ) {
+        } else if (dayInterval > 0) {
             return `${dayInterval}d`;
         }
 
@@ -104,13 +101,11 @@ const Feed = () => {
         if (hourInterval >= 1) return `${hourInterval}h`;
 
         const minuteInterval = Math.floor(seconds / 60);
-        if (minuteInterval >=1 ) return `${minuteInterval}m`;
+        if (minuteInterval >= 1) return `${minuteInterval}m`;
 
         return `${Math.floor(seconds)}s`;
     };
 
-
-    // get bookmarks
     const handleBookmark = async (postId) => {
         try {
             await axios.post(`http://localhost:8000/api/content/bookmark/${postId}`, {}, {
@@ -188,7 +183,7 @@ const Feed = () => {
                     const user = content.userDetails || {};
                     const profilePic = user.profilePic || 'default-profile-pic.jpg';
                     const userName = user.name || 'Unknown User';
-                    const userNickName = user.nickName || 'Unknown Nickname'
+                    const userNickName = user.nickName || 'Unknown Nickname';
 
                     return (
                         <div key={content._id} className="feed-item-container">
@@ -199,11 +194,11 @@ const Feed = () => {
                                     className="feed-item-user-profile-pic"
                                 />
                                 <div className="feed-item-user-details">
-                                <span className="feed-item-user-name">
-                                    {userName}
+                                    <Link to={`/user/${user._id}`} className="feed-item-user-name">
+                                        {userName}
+                                    </Link>
                                     <span style={{ margin: '0 0.3rem', color: 'gray', fontSize: '0.8rem' }}>•</span>
                                     <span style={{ fontSize: '0.7rem', color: 'gray' }}>{timeAgo(content.createdAt)}</span>
-                                </span>
                                 </div>
                             </div>
                             <div className="feed-item-content-body">
@@ -249,18 +244,17 @@ const Feed = () => {
                                         {content.likesCount} {content.likesCount === 1 ? 'like' : 'likes'}
                                     </>
                                 )}
-                                    {content.caption && (
-                                        <p className="feed-item-caption">
-                                            @<span style={{ fontWeight: 600, cursor: 'pointer' }}>{userNickName}</span>  {content.caption}
-                                        </p>
-                                    )}
+                                {content.caption && (
+                                    <p className="feed-item-caption">
+                                        @<span style={{ fontWeight: 600, cursor: 'pointer' }}>{userNickName}</span> {content.caption}
+                                    </p>
+                                )}
                             </div>
                             <div className="feed-item-divider"></div>
                         </div>
                     );
                 })
             )}
-
 
             {showLikesModal && (
                 <div className="feed-likes-modal">
@@ -286,8 +280,6 @@ const Feed = () => {
                     </div>
                 </div>
             )}
-
-
 
             {selectedPost && (
                 <div className="feed-modal">
