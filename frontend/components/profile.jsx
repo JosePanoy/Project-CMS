@@ -5,15 +5,35 @@ import '../src/assets/css/profile.css';
 import DashboardSidebar from './dashboard-main-navbar';
 
 const Profile = () => {
-    const navigate = useNavigate();
+  const { id } = useParams();
+  const [user, setUser] = useState(null);
 
-    return (
-        <>
-            <DashboardSidebar />
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/api/users/${id}`);
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user profile:', error.response ? error.response.data : error.message);
+      }
+    };
+  
+    fetchUserProfile();
+  }, [id]);
+  
 
-            <h1 style={{textAlign: 'center'}}></h1>
-        </>
-    );
+  if (!user) return <div>Loading...</div>;
+
+  return (
+    <>
+      <DashboardSidebar />
+      <div className="profile-container">
+        {/* Display user profile details */}
+        <h1>{user.name}</h1>
+        {/* Additional user details */}
+      </div>
+    </>
+  );
 };
 
 export default Profile;

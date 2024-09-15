@@ -1,4 +1,3 @@
-// main.jsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -14,7 +13,6 @@ import DashbordMain from '../components/dashboard-main';
 import UserProfile from '../components/user-profile';
 import SavePost from '../components/save-post';
 import Notification from '../components/dash-notification';
-import Profile from '../components/profile';
 
 const root = createRoot(document.getElementById('root'));
 root.render(
@@ -26,10 +24,9 @@ root.render(
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<DashbordMain />} /> 
-        <Route path="/profile" element={<UserProfile />} />
+        <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/savedpost" element={<SavePost />} />
         <Route path="/notification" element={<Notification />}></Route>
-        <Route path="/user" element={Profile}></Route>
       </Routes>
     </Router>
   </React.StrictMode>
