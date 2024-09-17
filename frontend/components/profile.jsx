@@ -10,10 +10,9 @@ function Profile () {
   return (
     <>
       <DashboardSidebar />
-      <h1 style={{textAlign: 'center'}}> Users Profile</h1>
+      <h1 style={{textAlign: 'center'}}> Users Profile</h1>  {/*** for viewing someones profile***/}
     </>
   );
 };
 
 export default Profile;
-``

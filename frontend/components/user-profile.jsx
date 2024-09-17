@@ -47,4 +47,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default UserProfile;  {/*** for viewing current user logged in***/}

@@ -40,7 +40,7 @@ function RightPanel({ user }) {
             <div className="profile-pic default-pic"></div>
           </Link>
         )}
-        <Link style={{ textDecoration: 'none' }} to="/user-profile">
+        <Link style={{ textDecoration: 'none' }} to="/profile">
           <div className="username-container">
             <span className="username-user">{user ? user.name : 'Guest'}</span>
             <span className="username-nickname">
