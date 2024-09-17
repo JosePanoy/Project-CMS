@@ -34,7 +34,16 @@ export const getUserContent = async (req, res) => {
 
   try {
     const contents = await Content.find({ userId });
-    res.json(contents);
+    const contentsWithFileType = contents.map(content => {
+      const fileExtension = content.fileName.split('.').pop().toLowerCase();
+      const fileType = ['jpg', 'jpeg', 'png'].includes(fileExtension) ? 'image' : 'video';
+      return {
+        ...content.toObject(),
+        fileType,
+        filePath: `usersUpload/${content.fileName}`
+      };
+    });
+    res.json(contentsWithFileType);
   } catch (error) {
     console.error("Error fetching content:", error);
     res.status(500).json({ message: "Server error" });

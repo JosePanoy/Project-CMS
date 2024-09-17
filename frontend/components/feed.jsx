@@ -1,12 +1,11 @@
-// content.controller.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaHeart, FaComment, FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import { useNavigate, Link } from 'react-router-dom';
+import { FaHeart, FaComment, FaBookmark } from 'react-icons/fa';
 import '../src/assets/css/feed.css';
 import heartIcon from '../src/assets/img/heart.png';
 import commentIcon from '../src/assets/img/comment.png';
 import saveIcon from '../src/assets/img/save.png';
-import { useNavigate, Link } from 'react-router-dom';
 
 const Feed = () => {
     const navigate = useNavigate();
@@ -82,18 +81,13 @@ const Feed = () => {
         }
     };
 
-    
-    // convert time posted
-
     const timeAgo = (date) => {
         const now = new Date();
         const seconds = Math.floor((now - new Date(date)) / 1000);
 
-        // for year conversion
         const yearInterval = Math.floor(seconds / 31536000);
         if(yearInterval >= 1) return `${yearInterval}y`;
 
-        // for day/week conversions
         const dayInterval = Math.floor(seconds / 86400);
         if(dayInterval > 7 ){
             const weekInterval = Math.floor(dayInterval / 7);
@@ -111,8 +105,6 @@ const Feed = () => {
         return `${Math.floor(seconds)}s`;
     };
 
-
-    // get bookmarks
     const handleBookmark = async (postId) => {
         try {
             await axios.post(`http://localhost:8000/api/content/bookmark/${postId}`, {}, {
@@ -177,6 +169,11 @@ const Feed = () => {
         }
     };
 
+    const handleUserProfileClick = (userId) => {
+        navigate(`/user-profile/${userId}`);
+    };
+    
+
     if (loading) return <div className="feed-loading">Loading...</div>;
     if (error) return <div className="feed-error">{error}</div>;
 
@@ -190,22 +187,22 @@ const Feed = () => {
                     const user = content.userDetails || {};
                     const profilePic = user.profilePic || 'default-profile-pic.jpg';
                     const userName = user.name || 'Unknown User';
-                    const userNickName = user.nickName || 'Unknown Nickname'
+                    const userNickName = user.nickName || 'Unknown Nickname';
 
                     return (
                         <div key={content._id} className="feed-item-container">
-                            <div className="feed-item-user-info">
+                            <div className="feed-item-user-info" onClick={() => handleUserProfileClick(user._id)}>
                                 <img
                                     src={`http://localhost:8000/profilepic/${profilePic}`}
                                     alt="Profile"
                                     className="feed-item-user-profile-pic"
                                 />
                                 <div className="feed-item-user-details">
-                                <span className="feed-item-user-name">
-                                    {userName}
-                                    <span style={{ margin: '0 0.3rem', color: 'gray', fontSize: '0.8rem' }}>•</span>
-                                    <span style={{ fontSize: '0.7rem', color: 'gray' }}>{timeAgo(content.createdAt)}</span>
-                                </span>
+                                    <span className="feed-item-user-name">
+                                        {userName}
+                                        <span style={{ margin: '0 0.3rem', color: 'gray', fontSize: '0.8rem' }}>•</span>
+                                        <span style={{ fontSize: '0.7rem', color: 'gray' }}>{timeAgo(content.createdAt)}</span>
+                                    </span>
                                 </div>
                             </div>
                             <div className="feed-item-content-body">
@@ -251,18 +248,17 @@ const Feed = () => {
                                         {content.likesCount} {content.likesCount === 1 ? 'like' : 'likes'}
                                     </>
                                 )}
-                                    {content.caption && (
-                                        <p className="feed-item-caption">
-                                            @<span style={{ fontWeight: 600, cursor: 'pointer' }}>{userNickName}</span>  {content.caption}
-                                        </p>
-                                    )}
+                                {content.caption && (
+                                    <p className="feed-item-caption">
+                                        @<span style={{ fontWeight: 600, cursor: 'pointer' }}>{userNickName}</span> {content.caption}
+                                    </p>
+                                )}
                             </div>
                             <div className="feed-item-divider"></div>
                         </div>
                     );
                 })
             )}
-
 
             {showLikesModal && (
                 <div className="feed-likes-modal">
@@ -271,7 +267,7 @@ const Feed = () => {
                         <button className="feed-likes-modal-close" onClick={handleCloseLikesModal}>×</button>
                         <div className="feed-likes-list">
                             {likesData.map(user => (
-                                <div key={user._id} className="feed-likes-item">
+                                <div key={user._id} className="feed-likes-item" onClick={() => handleUserProfileClick(user._id)}>
                                     <img
                                         src={`http://localhost:8000/profilepic/${user.profilePic || 'default-profile-pic.jpg'}`}
                                         alt={user.name}
@@ -288,8 +284,6 @@ const Feed = () => {
                     </div>
                 </div>
             )}
-
-
 
             {selectedPost && (
                 <div className="feed-modal">
@@ -312,7 +306,7 @@ const Feed = () => {
                                 )}
                             </div>
                             <div className="feed-modal-info">
-                                <div className="feed-modal-user-info">
+                                <div className="feed-modal-user-info" onClick={() => handleUserProfileClick(selectedPost.userDetails?._id)}>
                                     <img
                                         src={`http://localhost:8000/profilepic/${selectedPost.userDetails?.profilePic || 'default-profile-pic.jpg'}`}
                                         alt="Profile"

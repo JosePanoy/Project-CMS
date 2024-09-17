@@ -56,7 +56,6 @@ export const login = async (req, res) => {
 
 export const getUserInfo = async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
-
     if (!token) return res.status(401).json({ message: 'No token provided' });
 
     try {
@@ -78,6 +77,7 @@ export const getUserInfo = async (req, res) => {
     }
 };
 
+
 export const getAllUsers = async (req, res) => {
     try {
         const users = await User.find({}, 'name');
@@ -90,43 +90,46 @@ export const getAllUsers = async (req, res) => {
 
 export const getUserById = async (req, res) => {
     try {
-      const user = await User.findById(req.params.id);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      res.json(user);
-    } catch (error) {
-      res.status(500).json({ message: 'Server error', error: error.message });
-    }
-  };
-  
-
-
-export const getUserProfile = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        if (!id || !id.match(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/)) {
-            return res.status(400).json({ message: 'Invalid user ID' });
-        }
-
-        const user = await User.findById(id);
+        const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json({ message: 'User not found' });
-
-        const contents = await Content.find({ userId: id });
 
         res.json({
             name: user.name,
             nickName: user.nickName,
-            profilePic: user.profilePic,
-            contents: contents.map(content => ({
-                caption: content.caption,
-                fileName: content.fileName, 
-                createdAt: content.createdAt
-            }))
+            email: user.email,
+            addr: user.addr,
+            contact: user.contact,
+            profilePic: user.profilePic
         });
     } catch (error) {
-        console.error('Error fetching user profile:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+  
+
+export const getUserProfile = async (req, res) => {
+    const userId = req.params.id;
+    
+    try {
+        const userProfile = await User.aggregate([
+            { $match: { _id: mongoose.Types.ObjectId(userId) } },  // Match user by ObjectId
+            {
+                $lookup: {
+                    from: 'contents',
+                    localField: '_id',
+                    foreignField: 'userId',
+                    as: 'contents'
+                }
+            }
+        ]);
+
+        if (userProfile.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(userProfile[0]);
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 };

@@ -23,6 +23,7 @@ app.use(cors({
 
 app.use('/api/users', usersRoute);
 app.use('/api/content', contentRoutes);
+app.use('/api/profile', usersRoute);
 
 app.use('/profilepic', express.static(path.join(__dirname, 'profilepic')));
 app.use('/usersUpload', express.static(path.join(__dirname, 'usersUpload')));
