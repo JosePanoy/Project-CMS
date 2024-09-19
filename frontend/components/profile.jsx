@@ -8,8 +8,6 @@ const UsersProfile = () => {
     const { userId } = useParams(); 
     const [userData, setUserData] = useState(null);
     const [error, setError] = useState(null);
-    const [followingCount, setFollowingCount] = useState(0);
-    const [followersCount, setFollowersCount] = useState(0);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -22,11 +20,7 @@ const UsersProfile = () => {
                 const response = await axios.get(`http://localhost:8000/api/profile/${userId}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
-                console.log('User data:', response.data);
                 setUserData(response.data);
-                // If you have followersCount and followingCount, you might want to set them here as well.
-                // setFollowersCount(response.data.followersCount || 0);
-                // setFollowingCount(response.data.followingCount || 0);
             } catch (error) {
                 setError('Error fetching user data: ' + (error.response?.data?.message || error.message));
             }
