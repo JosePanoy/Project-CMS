@@ -1,4 +1,3 @@
-// user.routes.js
 import express from 'express';
 import { createUser, login, getUserInfo, getAllUsers, getUserById, getUserProfile } from '../controllers/user.controller.js';
 import { upload } from '../middleware/upload.js';
@@ -9,7 +8,7 @@ router.post('/register', upload.single('profilePic'), createUser);
 router.post('/login', login);
 router.get('/info', getUserInfo);
 router.get('/', getAllUsers);
-router.get('/:id', getUserById);
-router.get('/profile/:id', getUserProfile); // Make sure this line exists
+router.get('/:id', getUserById); // Changed to /:id for user by ID
+router.get('/profile/:id', getUserProfile); // Ensure this is kept
 
 export default router;

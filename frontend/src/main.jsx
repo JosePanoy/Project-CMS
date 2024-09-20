@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; 
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import About from '../components/about';  
 import Signup from '../components/signup';
@@ -12,7 +12,7 @@ import DashbordMain from '../components/dashboard-main';
 import SavePost from '../components/save-post';
 import Notification from '../components/dash-notification';
 import UserProfile from '../components/user-profile';
-import PersonalProfile from '../components/personal-profile'; // Import the PersonalProfile component
+import PersonalProfile from '../components/profile'; 
 
 const root = createRoot(document.getElementById('root'));
 root.render(
@@ -27,7 +27,8 @@ root.render(
         <Route path="/savedpost" element={<SavePost />} />
         <Route path="/notification" element={<Notification />} />
         <Route path="/profile" element={<UserProfile />} />
-        <Route path="/profile/:userId" element={<PersonalProfile />} /> {/* Add dynamic route for PersonalProfile */}
+        <Route path="/profile/:userId" element={<PersonalProfile />} /> 
+
       </Routes>
     </Router>
   </React.StrictMode>

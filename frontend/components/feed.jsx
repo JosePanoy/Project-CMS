@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import heartIcon from '../src/assets/img/heart.png';
 import commentIcon from '../src/assets/img/comment.png';
 import saveIcon from '../src/assets/img/save.png';
@@ -177,20 +177,27 @@ const Feed = () => {
 
                     return (
                         <div key={content._id} className="feed-item-container">
-                            <div className="feed-item-user-info">
-                                <img
-                                    src={`http://localhost:8000/profilepic/${profilePic}`}
-                                    alt="Profile"
-                                    className="feed-item-user-profile-pic"
-                                />
-                                <div className="feed-item-user-details">
-                                    <span className="feed-item-user-name">
-                                        {userName}
-                                        <span style={{ margin: '0 0.3rem', color: 'gray', fontSize: '0.8rem' }}>•</span>
-                                        <span style={{ fontSize: '0.7rem', color: 'gray' }}>{timeAgo(content.createdAt)}</span>
-                                    </span>
-                                </div>
-                            </div>
+
+                            
+<div className="feed-item-user-info">
+    <Link to={`/profile/${user._id}`} style={{ display: 'flex', alignItems: 'center' }}>
+        <img
+            src={`http://localhost:8000/profilepic/${profilePic}`}
+            alt="Profile"
+            className="feed-item-user-profile-pic"
+        />
+        <div className="feed-item-user-details" style={{ marginLeft: '0.5rem' }}>
+            <span className="feed-item-user-name">
+                {userName}
+                <span style={{ margin: '0 0.3rem', color: 'gray', fontSize: '0.8rem' }}>•</span>
+                <span style={{ fontSize: '0.7rem', color: 'gray' }}>{timeAgo(content.createdAt)}</span>
+            </span>
+        </div>
+    </Link>
+</div>
+
+
+
                             <div className="feed-item-content-body">
                                 {isVideo ? (
                                     <video
