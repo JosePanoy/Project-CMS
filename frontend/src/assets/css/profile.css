@@ -118,3 +118,41 @@
         font-size: 14px;
     }
 }
+.unique-user-content {
+    margin-top: 20px;
+    width: 600px;
+    margin: 0 auto;
+}
+
+.unique-content-item {
+    display: flex;
+    flex-direction: column;
+    border: none;
+    border-radius: 5px;
+    padding: 0; 
+    margin-bottom: 30px; 
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.unique-image-wrapper {
+    margin-bottom: 10px;
+}
+
+.unique-content-media,
+.unique-content-image {
+    width: 100%;
+    height: auto;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.unique-content-info {
+    padding: 10px;
+}
+
+.unique-content-caption {
+    font-size: 1.1rem; 
+    margin: 0;
+    color: #333;
+}

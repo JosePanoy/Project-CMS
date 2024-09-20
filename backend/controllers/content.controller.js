@@ -360,3 +360,16 @@ export const markNotificationsAsRead = async (req, res) => {
       res.status(500).json({ message: "Server error" });
   }
 };
+
+// get user content using id
+export const getUserContentById = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+      const contents = await Content.find({ userId });
+      res.json(contents);
+  } catch (error) {
+      console.error('Error fetching user content:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+};
