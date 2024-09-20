@@ -1,107 +1,120 @@
-.user-profile-container {
-    max-width: 700px;
-    margin: 0 auto;
+.unique-profile-container {
+    max-width: 800px;
+    margin: 20px auto;
     padding: 20px;
-    font-family: Arial, sans-serif;
-    border: 1px dotted red;
-    margin-top: 50px;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
-.user-profile-header {
-    display: flex;
-    border-bottom: 2px solid #e1e1e1;
-    padding-bottom: 20px;
-}
-
-.user-profile-picture {
-    flex: 0 0 150px;
-    margin-right: 20px;
-}
-
-.user-profile-picture img {
-    width: 100%;
-    height: 150px;
-    border-radius: 50%;
-}
-
-.user-profile-details {
-    flex: 1;
-}
-
-.user-profile-header-top {
+.unique-profile-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: -10px;
-}
-
-.user-profile-username {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 0;
-    cursor: default;
-}
-
-.user-profile-follow-button {
-    background-color: #0095f6;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.user-profile-nickname {
-    color: #999;
-    font-size: 0.8rem;
-    margin: 5px 0;
     margin-bottom: 20px;
 }
 
-.user-profile-stats {
+.unique-profile-pic {
+    width: 200px; /* Increased size */
+    height: 200px; /* Increased size */
+    border-radius: 50%;
+    border: 2px solid #dbdbdb;
+    margin-right: 50px;
+}
+
+.unique-profile-info {
+    flex-grow: 1;
     display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.unique-username-group {
+    display: flex;
+    align-items: center;
+}
+
+.unique-username {
+    font-size: 1.8rem;
+    margin: 0;
+    margin-right: 100px; 
+}
+
+.unique-button-group {
+    display: flex;
+}
+
+.unique-message-button {
+    background-color: hsl(0, 0%, 85%);
+    color: hsl(0, 0%, 11%);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
     font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
-.user-profile-stat {
-    text-align: center;
-    flex: 1;
+.unique-message-button:hover {
+    background-color: hsl(0, 0%, 65%);
 }
 
-.user-profile-followed-by {
-    margin-top: 20px;
+.unique-follow-button {
+    background-color: hsl(0, 0%, 85%);
+    color: hsl(0, 0%, 11%);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    display: flex; 
+    align-items: center; 
 }
 
-.user-profile-error,
-.user-profile-loading {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 18px;
+.unique-arrow-down {
+    margin-left: 10px; 
+    font-size: 0.8rem; 
 }
 
-.user-profile-loading {
-    color: #000;
+
+.unique-follow-button:hover {
+    background-color: hsl(0, 0%, 65%);
+}
+
+.unique-nickname {
+    color: gray;
+    font-size: 1rem;
+    margin: 5px 0 0 0; 
+}
+
+.unique-stats {
+    display: flex;
+    justify-content: space-around;
+    font-size: 1rem;
+    margin-top: 30px;
+    cursor: default;
+}
+
+.unique-stats span {
+    padding: 0 30px;
 }
 
 @media (max-width: 600px) {
-    .user-profile-header {
-        flex-direction: column;
-        align-items: flex-start;
+    .unique-profile-container {
+        padding: 15px;
     }
 
-    .user-profile-picture {
-        margin-bottom: 15px;
+    .unique-profile-pic {
+        width: 100px;
+        height: 100px;
     }
 
-    .user-profile-stats {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .user-profile-stat {
-        margin-bottom: 10px;
+    .unique-message-button,
+    .unique-follow-button {
+        padding: 8px 12px;
+        font-size: 14px;
     }
 }

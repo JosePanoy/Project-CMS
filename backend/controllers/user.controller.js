@@ -110,7 +110,7 @@ export const getUserById = async (req, res) => {
 
 export const getUserProfile = async (req, res) => {
     const userId = req.params.id;
-
+    
     try {
         const userProfile = await User.aggregate([
             { $match: { _id: mongoose.Types.ObjectId(userId) } },
