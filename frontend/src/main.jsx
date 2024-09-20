@@ -12,8 +12,7 @@ import Login from '../components/login';
 import DashbordMain from '../components/dashboard-main'; 
 import SavePost from '../components/save-post';
 import Notification from '../components/dash-notification';
-import PersonalProfile from '../components/personal-profile';
-import UsersProfile from '../components/profile';
+import UserProfile from '../components/user-profile';
 
 const root = createRoot(document.getElementById('root'));
 root.render(
@@ -26,9 +25,8 @@ root.render(
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<DashbordMain />} /> 
         <Route path="/savedpost" element={<SavePost />} />
-        <Route path="/notification" element={<Notification />}></Route>
-        <Route path="/personal-profile" element={<PersonalProfile />} /> 
-        <Route path="/user-profile/:userId" element={<UsersProfile />} />  
+        <Route path="/notification" element={<Notification />} />
+        <Route path="/profile" element={<UserProfile />} />
       </Routes>
     </Router>
   </React.StrictMode>

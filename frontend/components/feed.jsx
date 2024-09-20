@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
-import { FaHeart, FaComment, FaBookmark } from 'react-icons/fa';
-import '../src/assets/css/feed.css';
+import { useNavigate } from 'react-router-dom';
 import heartIcon from '../src/assets/img/heart.png';
 import commentIcon from '../src/assets/img/comment.png';
 import saveIcon from '../src/assets/img/save.png';
+import '../src/assets/css/feed.css';
 
 const Feed = () => {
-    const navigate = useNavigate();
     const [contents, setContents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -28,10 +26,8 @@ const Feed = () => {
                 });
                 const sortedContents = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setContents(sortedContents);
-
                 const liked = new Set(sortedContents.filter(post => post.isLiked).map(post => post._id));
                 setLikedPosts(liked);
-
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching data:', error.response?.data || error.message);
@@ -84,24 +80,19 @@ const Feed = () => {
     const timeAgo = (date) => {
         const now = new Date();
         const seconds = Math.floor((now - new Date(date)) / 1000);
-
         const yearInterval = Math.floor(seconds / 31536000);
-        if(yearInterval >= 1) return `${yearInterval}y`;
-
+        if (yearInterval >= 1) return `${yearInterval}y`;
         const dayInterval = Math.floor(seconds / 86400);
-        if(dayInterval > 7 ){
+        if (dayInterval > 7) {
             const weekInterval = Math.floor(dayInterval / 7);
             return `${weekInterval}w`;
-        } else if (dayInterval > 0 ) {
+        } else if (dayInterval > 0) {
             return `${dayInterval}d`;
         }
-
         const hourInterval = Math.floor(seconds / 3600);
         if (hourInterval >= 1) return `${hourInterval}h`;
-
         const minuteInterval = Math.floor(seconds / 60);
-        if (minuteInterval >=1 ) return `${minuteInterval}m`;
-
+        if (minuteInterval >= 1) return `${minuteInterval}m`;
         return `${Math.floor(seconds)}s`;
     };
 
@@ -169,11 +160,6 @@ const Feed = () => {
         }
     };
 
-    const handleUserProfileClick = (userId) => {
-        navigate(`/user-profile/${userId}`);
-    };
-    
-
     if (loading) return <div className="feed-loading">Loading...</div>;
     if (error) return <div className="feed-error">{error}</div>;
 
@@ -191,7 +177,7 @@ const Feed = () => {
 
                     return (
                         <div key={content._id} className="feed-item-container">
-                            <div className="feed-item-user-info" onClick={() => handleUserProfileClick(user._id)}>
+                            <div className="feed-item-user-info">
                                 <img
                                     src={`http://localhost:8000/profilepic/${profilePic}`}
                                     alt="Profile"
@@ -267,7 +253,7 @@ const Feed = () => {
                         <button className="feed-likes-modal-close" onClick={handleCloseLikesModal}>×</button>
                         <div className="feed-likes-list">
                             {likesData.map(user => (
-                                <div key={user._id} className="feed-likes-item" onClick={() => handleUserProfileClick(user._id)}>
+                                <div key={user._id} className="feed-likes-item">
                                     <img
                                         src={`http://localhost:8000/profilepic/${user.profilePic || 'default-profile-pic.jpg'}`}
                                         alt={user.name}
@@ -306,7 +292,7 @@ const Feed = () => {
                                 )}
                             </div>
                             <div className="feed-modal-info">
-                                <div className="feed-modal-user-info" onClick={() => handleUserProfileClick(selectedPost.userDetails?._id)}>
+                                <div className="feed-modal-user-info">
                                     <img
                                         src={`http://localhost:8000/profilepic/${selectedPost.userDetails?.profilePic || 'default-profile-pic.jpg'}`}
                                         alt="Profile"
