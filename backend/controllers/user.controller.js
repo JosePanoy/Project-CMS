@@ -5,6 +5,8 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
+
+// for sign up function
 export const createUser = async (req, res) => {
     const { name, nickName, addr, email, contact, password } = req.body;
     const profilePic = req.file ? req.file.filename : null;
@@ -29,7 +31,7 @@ export const createUser = async (req, res) => {
         await newUser.save();
         res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
-        if (error.code === 11000) { // Duplicate key error
+        if (error.code === 11000) { 
             return res.status(400).json({ message: 'Email already in use' });
         }
         console.error('Error creating user:', error);
@@ -37,6 +39,8 @@ export const createUser = async (req, res) => {
     }
 };
 
+
+// function for login
 export const login = async (req, res) => {
     const { email, password } = req.body;
 
@@ -54,6 +58,8 @@ export const login = async (req, res) => {
     }
 };
 
+
+// getting users information
 export const getUserInfo = async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'No token provided' });
@@ -78,6 +84,7 @@ export const getUserInfo = async (req, res) => {
 };
 
 
+// retrieve all users
 export const getAllUsers = async (req, res) => {
     try {
         const users = await User.find({}, 'name');
@@ -87,6 +94,8 @@ export const getAllUsers = async (req, res) => {
     }
 };
 
+
+// get user by id
 export const getUserById = async (req, res) => {
     const userId = req.params.id;
 
@@ -109,6 +118,8 @@ export const getUserById = async (req, res) => {
 };
 
 
+
+// for retrieving users profile
 export const getUserProfile = async (req, res) => {
     const userId = req.params.id;
 
